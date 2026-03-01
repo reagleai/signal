@@ -89,7 +89,7 @@ export default function DateRangePicker({ value, onChange }) {
 
                 {showCustom && (
                     <div
-                        className="absolute top-full mt-2 right-0 bg-white border border-[#E8EAED] rounded-xl shadow-lg p-4 z-50 w-[260px] sm:w-[280px]"
+                        className="fixed sm:absolute inset-x-4 sm:inset-x-auto top-auto sm:top-full bottom-4 sm:bottom-auto sm:mt-2 sm:right-0 bg-white border border-[#E8EAED] rounded-xl shadow-lg p-4 z-50 sm:w-[280px]"
                         role="dialog"
                         aria-modal="true"
                         aria-label="Select custom date range"
@@ -102,7 +102,7 @@ export default function DateRangePicker({ value, onChange }) {
                                     type="date"
                                     value={startInput}
                                     onChange={e => setStartInput(e.target.value)}
-                                    className="w-full border border-[#C7CACA] rounded-lg px-3 py-2 text-[13px] text-[#0F1111] focus:border-[#FF9900] focus:outline-none min-h-[40px]"
+                                    className="w-full border border-[#C7CACA] rounded-lg px-3 py-2 text-[13px] text-[#0F1111] focus:border-[#FF9900] focus:outline-none min-h-[44px]"
                                 />
                             </div>
                             <div>
@@ -112,12 +112,12 @@ export default function DateRangePicker({ value, onChange }) {
                                     type="date"
                                     value={endInput}
                                     onChange={e => setEndInput(e.target.value)}
-                                    className="w-full border border-[#C7CACA] rounded-lg px-3 py-2 text-[13px] text-[#0F1111] focus:border-[#FF9900] focus:outline-none min-h-[40px]"
+                                    className="w-full border border-[#C7CACA] rounded-lg px-3 py-2 text-[13px] text-[#0F1111] focus:border-[#FF9900] focus:outline-none min-h-[44px]"
                                 />
                             </div>
                             <button
                                 onClick={handleApply}
-                                className="bg-[#FF9900] text-white rounded-lg px-4 py-2 text-[13px] font-semibold hover:bg-[#E68A00] transition-colors min-h-[40px]"
+                                className="bg-[#FF9900] text-white rounded-lg px-4 py-2 text-[13px] font-semibold hover:bg-[#E68A00] transition-colors min-h-[44px]"
                             >
                                 Apply
                             </button>
