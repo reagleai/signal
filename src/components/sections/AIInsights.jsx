@@ -96,14 +96,14 @@ export default function AIInsights() {
                         <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL — SECTION 3</div>
                         <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">AI Insights</h1>
                         <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[560px]">
-                            5 problems synthesized by Signal's Master PM Node from 47,832 return events and 14 knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
+                            5 problems synthesized by Signal's Master PM Node from {state.lastSyncInfo?.recordsProcessed || '47,832'} return events and {state.lastSyncInfo?.ragIndexed || 14} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
                         </p>
                     </div>
 
                     {/* DATE RANGE INDICATOR */}
                     <div className="flex items-center gap-2 mt-3 mb-6">
                         <Calendar size={14} className="text-[#FF9900]" />
-                        <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel} data · 47,832 events</span>
+                        <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {state.lastSyncInfo?.lastGlobalSyncTime || '—'} sync · {state.lastSyncInfo?.recordsProcessed || '47,832'} events</span>
                     </div>
 
                     {/* ═══ MASTER PROBLEMS LIST ═══ */}
