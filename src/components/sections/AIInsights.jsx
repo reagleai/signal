@@ -18,45 +18,32 @@ const sourceColors = {
 }
 
 export default function AIInsights() {
-    const { state, setActiveSection, setSelectedProblemId, setActiveCitations, addToNotepad, updateNotepadItem, removeFromNotepad, addToast } = useApp()
+    const {
+        state,
+        setActiveSection,
+        setSelectedProblemId,
+        setActiveCitations,
+        addToNotepad,
+        updateNotepadItem,
+        removeFromNotepad,
+        addToast,
+        startAiAnalysis,
+        setAiRunState
+    } = useApp()
     const [expandedId, setExpandedId] = useState(null)
     const [shareOpen, setShareOpen] = useState(false)
-    const [apiData, setApiData] = useState(() => {
-        try {
-            const cached = localStorage.getItem('signal-ai-insights-cache');
-            return cached ? JSON.parse(cached) : null;
-        } catch {
-            return null;
-        }
-    })
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState(null)
+
+    const { status, error, lastKnownData } = state.aiRunState;
+    const isLoading = status === 'running';
+    const isRecovering = status === 'recovering';
+    const hasData = !!lastKnownData;
 
     const handleAnalyze = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            // Task Tracking:
-            // - [x] Implement robust adapter and normalization layer
-            // - [x] Ask for webhook URL and auth details
-            const result = await fetchAIInsights({
-                webhookUrl: 'https://n8n-fastest.protonaiagents.com/webhook/signal/run',
-                payload: { time_window: state.dateRange.preset || "7d" }
-            });
-            setApiData(result);
-            try { localStorage.setItem('signal-ai-insights-cache', JSON.stringify(result)); } catch { }
-        } catch (err) {
-            console.error("Webhook fetch failed:", err);
-            setError("Live API unavailable. Displaying cached demonstration data.");
-            const fallback = await fetchAIInsights({ useMock: true });
-            setApiData(fallback);
-        } finally {
-            setIsLoading(false);
-        }
+        await startAiAnalysis(state.dateRange.preset);
     }
 
-    const masterProblems = apiData?.masterProblems || []
-    const citationLibrary = apiData?.citationLibrary || []
+    const masterProblems = lastKnownData?.masterProblems || []
+    const citationLibrary = lastKnownData?.citationLibrary || []
 
     const rangeLabel =
         state.dateRange.preset === '7d' ? 'Past 7 Days' :
@@ -98,7 +85,7 @@ export default function AIInsights() {
 
 
 
-    const summary = apiData?.summary || state.lastSyncInfo || {
+    const summary = lastKnownData?.summary || state.lastSyncInfo || {
         activeSources: 5,
         ragIndexed: 14,
         recordsProcessed: '47,832'
@@ -132,32 +119,51 @@ export default function AIInsights() {
                             className={`bg-[#232F3E] text-white px-4 py-2 rounded-lg text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#374151]'}`}
                         >
                             <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-                            {isLoading ? 'Analyzing...' : 'Analyze Signals'}
+                            {isLoading ? 'Analyzing...' : isRecovering ? 'Restart Analysis' : 'Analyze Signals'}
                         </button>
                     </div>
 
                     {/* ERROR BANNER */}
-                    {error && (
+                    {(error && status === 'failed') && (
                         <div className="mb-6 bg-[#FFF4F4] border border-[#F8CCCC] rounded-xl p-4 flex items-start gap-3">
                             <AlertCircle size={18} className="text-[#C0392B] flex-shrink-0 mt-0.5" />
                             <div className="flex-1">
-                                <h4 className="text-[13px] font-bold text-[#C0392B] mb-1">Webhook Connection Error</h4>
+                                <h4 className="text-[13px] font-bold text-[#C0392B] mb-1">Analysis Failed</h4>
                                 <p className="text-[12px] text-[#C0392B]/80">{error}</p>
                             </div>
-                            <button onClick={() => window.location.reload()} className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#F8CCCC] rounded-lg text-[12px] font-semibold text-[#C0392B] hover:bg-[#FDF0F0] transition-colors">
+                            <button onClick={handleAnalyze} className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#F8CCCC] rounded-lg text-[12px] font-semibold text-[#C0392B] hover:bg-[#FDF0F0] transition-colors">
                                 <RefreshCw size={12} /> Retry
                             </button>
                         </div>
                     )}
 
                     {/* ═══ MASTER PROBLEMS LIST ═══ */}
-                    {isLoading && !apiData ? (
+                    {isLoading && !hasData ? (
                         <div className="flex flex-col items-center justify-center py-20 bg-white border border-[#E8EAED] rounded-xl shadow-sm">
                             <div className="w-10 h-10 border-4 border-[#FF9900]/20 border-t-[#FF9900] rounded-full animate-spin mb-4" />
                             <h3 className="text-[15px] font-semibold text-[#0F1111] mb-2">Analyzing Signals...</h3>
                             <p className="text-[13px] text-[#565959]">Master PM Node is running {state.dateRange.preset} data through LLM models.</p>
                         </div>
-                    ) : !apiData ? (
+                    ) : isRecovering ? (
+                        <div className="flex flex-col items-center justify-center py-20 bg-[#FFF8EE] border border-[#FF9900]/20 rounded-xl shadow-sm text-center px-4">
+                            <div className="bg-[#FF9900]/10 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                                <AlertCircle size={24} className="text-[#B7791F]" />
+                            </div>
+                            <h3 className="text-[15px] font-semibold text-[#0F1111] mb-2">Analysis Interrupted</h3>
+                            <p className="text-[13px] text-[#565959] max-w-[360px] mb-4">The previous analysis was interrupted by a page reload. We cannot confirm if it completed successfully.</p>
+                            <button
+                                onClick={handleAnalyze}
+                                className="bg-[#FF9900] text-white px-6 py-2.5 rounded-lg text-[14px] font-semibold hover:bg-[#E68A00] transition-colors"
+                            >
+                                Restart Analysis
+                            </button>
+                            {hasData && (
+                                <button className="mt-4 text-[#565959] text-[12px] underline" onClick={() => setAiRunState({ status: 'completed' })}>
+                                    Dismiss and view last successful results
+                                </button>
+                            )}
+                        </div>
+                    ) : !hasData ? (
                         <div className="flex flex-col items-center justify-center py-20 bg-white border border-[#E8EAED] rounded-xl shadow-sm text-center px-4">
                             <div className="bg-[#F7F8FA] w-14 h-14 rounded-full flex items-center justify-center mb-4">
                                 <BookOpen size={24} className="text-[#9CA3A3]" />

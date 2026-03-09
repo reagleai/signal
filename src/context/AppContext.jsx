@@ -14,6 +14,13 @@ const defaultState = {
     notePadItems: [],
     activeCitations: [],
     lastSyncInfo: null,  // { lastGlobalSyncTime, activeSources, ragIndexed, recordsProcessed }
+    aiRunState: {
+        status: 'idle', // 'idle' | 'running' | 'completed' | 'failed' | 'recovering'
+        jobId: null,
+        startedAt: null,
+        error: null,
+        lastKnownData: null
+    },
     preferences: {
         defaultSection: null,
         lastVisited: null,
@@ -49,12 +56,16 @@ function reducer(state, action) {
             return { ...state, activeCitations: action.payload }
         case 'SET_LAST_SYNC_INFO':
             return { ...state, lastSyncInfo: action.payload }
+        case 'SET_AI_RUN_STATE':
+            return { ...state, aiRunState: { ...state.aiRunState, ...action.payload } }
         case 'SET_PREFERENCES':
             return { ...state, preferences: { ...state.preferences, ...action.payload } }
         default:
             return state
     }
 }
+
+import { fetchAIInsights } from '../api/aiInsightsAdapter'
 
 export function AppProvider({ children }) {
     const [state, dispatch] = useReducer(reducer, defaultState, (initial) => {
@@ -68,6 +79,18 @@ export function AppProvider({ children }) {
             if (savedSync) {
                 hydrated.lastSyncInfo = JSON.parse(savedSync)
             }
+            const savedAiRun = localStorage.getItem('signal-ai-run-state')
+            if (savedAiRun) {
+                const parsedAiRun = JSON.parse(savedAiRun)
+                // If we hard rehydrated while "running", the connection was killed. Move to recovering.
+                if (parsedAiRun.status === 'running') {
+                    // Timeout logic: if it's older than 10 mins, just fail it or return to idle.
+                    const isStale = (Date.now() - new Date(parsedAiRun.startedAt).getTime()) > 600000;
+                    parsedAiRun.status = isStale ? 'failed' : 'recovering';
+                    parsedAiRun.error = isStale ? "Run timed out." : "Analysis was interrupted by a page reload. We cannot confirm the active status.";
+                }
+                hydrated.aiRunState = parsedAiRun
+            }
         } catch { }
         return hydrated
     })
@@ -80,6 +103,13 @@ export function AppProvider({ children }) {
             } catch { }
         }
     }, [state.lastSyncInfo])
+
+    // Save ai run state to localStorage on change
+    useEffect(() => {
+        try {
+            localStorage.setItem('signal-ai-run-state', JSON.stringify(state.aiRunState))
+        } catch { }
+    }, [state.aiRunState])
 
     // Save preferences to localStorage on change
     useEffect(() => {
@@ -108,6 +138,40 @@ export function AppProvider({ children }) {
         removeFromNotepad: (id) => dispatch({ type: 'REMOVE_FROM_NOTEPAD', payload: id }),
         setActiveCitations: (ids) => dispatch({ type: 'SET_ACTIVE_CITATIONS', payload: ids }),
         setLastSyncInfo: (info) => dispatch({ type: 'SET_LAST_SYNC_INFO', payload: info }),
+        setAiRunState: (runState) => dispatch({ type: 'SET_AI_RUN_STATE', payload: runState }),
+        startAiAnalysis: async (timeWindow) => {
+            // Guard against multiple clicks
+            if (state.aiRunState.status === 'running') return;
+
+            const jobId = `job-${Date.now()}`;
+            dispatch({
+                type: 'SET_AI_RUN_STATE',
+                payload: {
+                    status: 'running',
+                    jobId,
+                    startedAt: new Date().toISOString(),
+                    error: null
+                }
+            });
+
+            try {
+                // Keep the global context alive while fetching
+                const result = await fetchAIInsights({
+                    webhookUrl: 'https://n8n-fastest.protonaiagents.com/webhook/signal/run',
+                    payload: { time_window: timeWindow || "7d", request_id: jobId }
+                });
+                dispatch({
+                    type: 'SET_AI_RUN_STATE',
+                    payload: { status: 'completed', lastKnownData: result }
+                });
+            } catch (err) {
+                console.error("Global Webhook fetch failed:", err);
+                dispatch({
+                    type: 'SET_AI_RUN_STATE',
+                    payload: { status: 'failed', error: 'Live API unavailable. Could not complete analysis.' }
+                });
+            }
+        }
     }
 
     return (
