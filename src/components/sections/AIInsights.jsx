@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Calendar, ChevronDown, PenLine, ExternalLink, BookOpen, FileText, Clock, Send, X } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
-import { masterProblems as mockMasterProblems, citationLibrary as mockCitationLibrary, reasonCodeColors } from '../../data/mockData'
-import { endpoints } from '../../config/endpoints'
+import { masterProblems, citationLibrary, reasonCodeColors } from '../../data/mockData'
 import Badge from '../shared/Badge'
 import CitationBadge from '../shared/CitationBadge'
 import ChatBot from '../shared/ChatBot'
@@ -11,45 +10,26 @@ import ShareModal from '../shared/ShareModal'
 // Source dot colors
 const sourceColors = {
     "Zendesk": "#03363D",
-    "Zendesk Support": "#03363D",
     "App Store Reviews": "#0D96F6",
     "DW": "#FF9900",
-    "Data Warehouse": "#FF9900",
-    "Productboard": "#8B5CF6",
-    "Fraud & Abuse": "#C0392B"
+    "Productboard": "#8B5CF6"
 }
 
 export default function AIInsights() {
     const { state, setActiveSection, setSelectedProblemId, setActiveCitations, addToNotepad, updateNotepadItem, removeFromNotepad, addToast } = useApp()
     const [expandedId, setExpandedId] = useState(null)
     const [shareOpen, setShareOpen] = useState(false)
-    const [masterProblems, setMasterProblems] = useState(mockMasterProblems)
-    const [citationLibrary, setCitationLibrary] = useState(mockCitationLibrary)
-    const [loading, setLoading] = useState(true)
 
-    // Fetch insights from n8n, fallback to mock
-    useEffect(() => {
-        let cancelled = false
-        async function load() {
-            setLoading(true)
-            try {
-                const res = await fetch(endpoints.insights)
-                if (!res.ok) throw new Error(`HTTP ${res.status}`)
-                const json = await res.json()
-                if (!cancelled && json.masterProblems?.length) {
-                    setMasterProblems(json.masterProblems)
-                    if (json.citationLibrary?.length) setCitationLibrary(json.citationLibrary)
-                }
-            } catch {
-                // Keep mock data
-            } finally {
-                if (!cancelled) setLoading(false)
-            }
-        }
-        load()
-        return () => { cancelled = true }
-    }, [])
+    const rangeLabel =
+        state.dateRange.preset === '7d' ? 'Past 7 Days' :
+            state.dateRange.preset === '30d' ? 'Past 30 Days' :
+                state.dateRange.preset === '90d' ? 'Past 90 Days' :
+                    `${state.dateRange.startDate?.toLocaleDateString()} – ${state.dateRange.endDate?.toLocaleDateString()}`
 
+    const selected = masterProblems.find(p => p.id === state.selectedProblemId)
+    const visibleCitations = state.activeCitations
+        .map(id => citationLibrary.find(c => c.id === id))
+        .filter(Boolean)
 
     const isInNotepad = (problemId) => state.notePadItems.some(i => i.problemId === problemId)
 
@@ -78,15 +58,9 @@ export default function AIInsights() {
         })
     }
 
-    const handleViewInMetrics = (e, problem) => {
-        e.stopPropagation()
-        localStorage.setItem("signal_openReasonCode", problem.reasonCodes[0])
-        setActiveSection("metrics")
-    }
+
 
     const confColor = (v) => v >= 85 ? '#067D62' : v >= 70 ? '#B7791F' : '#C0392B'
-
-    const selected = masterProblems.find(p => p.id === state.selectedProblemId)
 
     return (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-8" id="section-ai-insights" role="tabpanel" aria-label="AI Insights">
@@ -98,14 +72,14 @@ export default function AIInsights() {
                         <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL — SECTION 3</div>
                         <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">AI Insights</h1>
                         <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[560px]">
-                            5 problems synthesized by Signal's Master PM Node from {state.lastSyncInfo?.recordsProcessed || '47,832'} return events and {state.lastSyncInfo?.ragIndexed || 14} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
+                            5 problems synthesized by Signal's Master PM Node from 47,832 return events and 14 knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
                         </p>
                     </div>
 
                     {/* DATE RANGE INDICATOR */}
                     <div className="flex items-center gap-2 mt-3 mb-6">
                         <Calendar size={14} className="text-[#FF9900]" />
-                        <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {state.lastSyncInfo?.lastGlobalSyncTime || '—'} sync · {state.lastSyncInfo?.recordsProcessed || '47,832'} events</span>
+                        <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel} data · 47,832 events</span>
                     </div>
 
                     {/* ═══ MASTER PROBLEMS LIST ═══ */}
@@ -199,9 +173,7 @@ export default function AIInsights() {
                                                             {code}
                                                         </span>
                                                     ))}
-                                                    <button className="text-[10px] sm:text-[11px] text-[#0066C0] cursor-pointer hover:underline ml-1" onClick={(e) => handleViewInMetrics(e, problem)}>
-                                                        ↗ View in Metrics
-                                                    </button>
+
                                                 </div>
                                             </div>
 
@@ -444,7 +416,7 @@ export default function AIInsights() {
                 onClose={() => setShareOpen(false)}
                 notePadItems={state.notePadItems}
                 citationLibrary={citationLibrary}
-                rangeLabel={state.lastSyncInfo?.lastGlobalSyncTime || '—'}
+                rangeLabel={rangeLabel}
                 addToast={addToast}
             />
         </div>
