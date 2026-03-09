@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CheckCircle, AlertCircle, RefreshCw, XCircle, Brain, Target, ShieldAlert, Sparkles, BookOpen } from 'lucide-react'
+import { Calendar, ChevronDown, PenLine, ExternalLink, BookOpen, FileText, Clock, Send, X, AlertCircle, RefreshCw, CheckCircle, XCircle, Brain, Target, ShieldAlert, Sparkles } from 'lucide-react'
 import { useApp, useDurableAction } from '../../context/AppContext'
 import { fetchAIInsights } from '../../api/aiInsightsAdapter'
 import Badge from '../shared/Badge'
