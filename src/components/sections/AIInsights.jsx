@@ -444,7 +444,7 @@ export default function AIInsights() {
                 onClose={() => setShareOpen(false)}
                 notePadItems={state.notePadItems}
                 citationLibrary={citationLibrary}
-                rangeLabel={rangeLabel}
+                rangeLabel={state.lastSyncInfo?.lastGlobalSyncTime || '—'}
                 addToast={addToast}
             />
         </div>
