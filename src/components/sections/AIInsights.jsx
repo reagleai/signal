@@ -86,6 +86,8 @@ export default function AIInsights() {
 
     const confColor = (v) => v >= 85 ? '#067D62' : v >= 70 ? '#B7791F' : '#C0392B'
 
+    const selected = masterProblems.find(p => p.id === state.selectedProblemId)
+
     return (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-8" id="section-ai-insights" role="tabpanel" aria-label="AI Insights">
             <div className="flex flex-col xl:flex-row gap-6 items-start">
