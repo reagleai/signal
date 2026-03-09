@@ -90,9 +90,23 @@ function normalizeMock(item) {
 }
 
 export default function DataStatus() {
-    const { setActiveSection, addToast, setLastSyncInfo } = useApp()
-    const [sources, setSources] = useState(mockIntegrations.map(normalizeMock))
-    const [summary, setSummary] = useState({ activeSources: 5, ragIndexed: 14, recordsProcessed: '2.1M', lastGlobalSyncTime: '—', lastGlobalSyncTimeRaw: null })
+    const { state, setActiveSection, addToast, setLastSyncInfo } = useApp()
+
+    const [sources, setSources] = useState(() => {
+        try {
+            const cached = localStorage.getItem('signal-sources-cache')
+            if (cached) return JSON.parse(cached)
+        } catch { }
+        return mockIntegrations.map(normalizeMock)
+    })
+
+    const summary = state.lastSyncInfo || {
+        activeSources: 5,
+        ragIndexed: 14,
+        recordsProcessed: '2.1M',
+        lastGlobalSyncTime: '—',
+        lastGlobalSyncTimeRaw: null
+    }
     const [loading, setLoading] = useState(false)
     const [syncing, setSyncing] = useState(false)
     const [lastError, setLastError] = useState(null)
@@ -114,6 +128,10 @@ export default function DataStatus() {
                 : mockIntegrations.map(normalizeMock)
 
             setSources(normalized)
+            try {
+                localStorage.setItem('signal-sources-cache', JSON.stringify(normalized))
+            } catch { }
+
             const syncInfo = {
                 activeSources: json.activeSources ?? normalized.filter(s => s.isSynced).length,
                 ragIndexed: json.ragIndexed ?? normalized.reduce((s, r) => s + r.ragCount, 0),
@@ -123,7 +141,6 @@ export default function DataStatus() {
                 lastGlobalSyncTime: formatISTFull(json.lastGlobalSyncTimeRaw || json.lastGlobalSyncTime),
                 lastGlobalSyncTimeRaw: json.lastGlobalSyncTimeRaw || null,
             }
-            setSummary(syncInfo)
             setLastSyncInfo(syncInfo)
         } catch (err) {
             setLastError(err.message)

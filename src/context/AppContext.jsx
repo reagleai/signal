@@ -58,15 +58,28 @@ function reducer(state, action) {
 
 export function AppProvider({ children }) {
     const [state, dispatch] = useReducer(reducer, defaultState, (initial) => {
+        let hydrated = { ...initial }
         try {
-            const saved = localStorage.getItem('signal-preferences')
-            if (saved) {
-                const prefs = JSON.parse(saved)
-                return { ...initial, preferences: { ...initial.preferences, ...prefs } }
+            const savedPrefs = localStorage.getItem('signal-preferences')
+            if (savedPrefs) {
+                hydrated.preferences = { ...hydrated.preferences, ...JSON.parse(savedPrefs) }
+            }
+            const savedSync = localStorage.getItem('signal-sync-cache')
+            if (savedSync) {
+                hydrated.lastSyncInfo = JSON.parse(savedSync)
             }
         } catch { }
-        return initial
+        return hydrated
     })
+
+    // Save sync info to localStorage on change
+    useEffect(() => {
+        if (state.lastSyncInfo) {
+            try {
+                localStorage.setItem('signal-sync-cache', JSON.stringify(state.lastSyncInfo))
+            } catch { }
+        }
+    }, [state.lastSyncInfo])
 
     // Save preferences to localStorage on change
     useEffect(() => {
