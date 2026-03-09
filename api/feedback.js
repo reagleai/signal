@@ -5,7 +5,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` })
     }
 
-    const { name, email, category, description } = req.body
+    const { name, email, category, description, page } = req.body
 
     // Server-side validation
     if (!name || name.trim().length < 2) {
@@ -17,51 +17,42 @@ export default async function handler(req, res) {
     if (!category) {
         return res.status(400).json({ message: 'Category is required' })
     }
-    if (!description || description.trim().length < 10) {
-        return res.status(400).json({ message: 'Description must be at least 10 characters' })
+
+    // Description is optional in V1
+
+    // Retrieve webhook URL from server environment correctly
+    const feedbackWebhookUrl = process.env.N8N_FEEDBACK_WEBHOOK || 'https://n8n-fastest.protonaiagents.com/webhook/feedback-received';
+
+    // Construct exactly payload requested by the user
+    const payload = {
+        name,
+        email,
+        tag: category,
+        description: description?.trim() || "",
+        page: page || "/",
+        submitted_at: new Date().toISOString()
     }
 
-    // Hide the destination email server-side
-    const DESTINATION_EMAIL = 'reagleai@gmail.com'
-
-    // Here you would integrate with an email provider SDK like Resend or SendGrid.
-    // Because the active Vercel project needs an API credential added, we mock the safe return.
-    // Example for Resend:
-    // const resendClient = new Resend(process.env.RESEND_API_KEY)
-    // await resendClient.emails.send({ ... })
-
-    const MOCK_DELIVERY = true
-
     try {
-        if (MOCK_DELIVERY) {
-            // Simulate network delay for UI polish
-            await new Promise(resolve => setTimeout(resolve, 800))
+        console.log(`[Proxy] Forwarding secure feedback payload to n8n webhook...`);
 
-            console.log(`[SECURE DEMO] Intended for ${DESTINATION_EMAIL}`)
-            console.log(`[SECURE DEMO] Form Payload:`, { name, email, category, description })
+        const fetchRes = await fetch(feedbackWebhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
 
-            return res.status(200).json({ success: true, message: 'Feedback safely captured (Demo).' })
+        if (!fetchRes.ok) {
+            console.error(`Upstream n8n feedback error: ${fetchRes.status}`);
+            throw new Error(`Upstream webhook failed: ${fetchRes.status}`);
         }
 
-        // Example actual delivery handler below
-        /*
-        if (!process.env.RESEND_API_KEY) {
-          return res.status(500).json({ message: 'Server configuration error: Email API key missing' })
-        }
-        
-        await deliverySdk.send({
-          from: 'feedback@signal-app.com', // Verified domain
-          to: DESTINATION_EMAIL,
-          subject: `[Signal Feedback] ${category} from ${name}`,
-          text: `Name: ${name}\nEmail: ${email}\nCategory: ${category}\n\nDescription:\n${description}`,
-          reply_to: email
-        })
-        
-        return res.status(200).json({ success: true })
-        */
+        return res.status(200).json({ success: true, message: 'Feedback successfully delivered.' })
 
     } catch (error) {
-        console.error('Email delivery failed:', error)
-        return res.status(500).json({ message: 'Failed to deliver feedback email safely.' })
+        console.error('Feedback delivery failed:', error)
+        return res.status(500).json({ message: 'Failed to deliver feedback safely.' })
     }
 }

@@ -1,22 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Mock the feedback endpoint locally without consuming the post stream (which causes indefinite hangs)
-const localFeedbackMock = () => {
-  return {
-    name: 'local-feedback-mock',
-    configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        if (req.url.includes('/api/feedback') && req.method === 'POST') {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ success: true, message: 'Mocked successful local feedback request.' }));
-          return;
-        }
-        next();
-      })
-    }
-  }
-}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -32,7 +16,7 @@ export default defineConfig(({ mode }) => {
   } catch (e) { }
 
   return {
-    plugins: [react(), localFeedbackMock()],
+    plugins: [react()],
     build: { sourcemap: false },
     server: {
       proxy: {
@@ -59,6 +43,12 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: () => `${basePath}/signal-metrics-charts`
+        },
+        '/api/feedback': {
+          target: targetDomain,
+          changeOrigin: true,
+          secure: false,
+          rewrite: () => `/webhook/feedback-received`
         }
       }
     }

@@ -58,18 +58,19 @@ export default function FeedbackButton() {
             setErrorMsg('Please select a category.')
             return
         }
-        if (!description.trim() || description.trim().length < 10) {
-            setErrorMsg('Description must be at least 10 characters long.')
-            return
-        }
+
+        // Description is explicitly optional in V1
 
         setStatus('submitting')
 
         try {
+            // Optional: send the current page path to help contextualize the feedback
+            const page = window.location.pathname;
+
             const res = await fetch('/api/feedback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, category: selectedCategory, description })
+                body: JSON.stringify({ name, email, category: selectedCategory, description, page })
             })
 
             if (!res.ok) {
