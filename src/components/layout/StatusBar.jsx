@@ -9,8 +9,6 @@ export default function StatusBar() {
 
             {/* Right */}
             <div className="flex items-center gap-3 sm:gap-4">
-                <span className="text-[11px] sm:text-[12px] text-white/60 hidden sm:inline">500 Returns PMs</span>
-                <span className="w-px h-3 bg-white/20 hidden sm:inline" />
                 <span className="text-[11px] sm:text-[12px] text-white/50">Signal v1.0 · Pilot</span>
             </div>
         </footer>

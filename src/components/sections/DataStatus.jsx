@@ -93,7 +93,7 @@ export default function DataStatus() {
     const { setActiveSection, addToast, setLastSyncInfo } = useApp()
     const [sources, setSources] = useState(mockIntegrations.map(normalizeMock))
     const [summary, setSummary] = useState({ activeSources: 5, ragIndexed: 14, recordsProcessed: '2.1M', lastGlobalSyncTime: '—', lastGlobalSyncTimeRaw: null })
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [syncing, setSyncing] = useState(false)
     const [lastError, setLastError] = useState(null)
 
@@ -133,9 +133,7 @@ export default function DataStatus() {
         }
     }
 
-    useEffect(() => {
-        fetchData()
-    }, [])
+    // No auto-fetch on mount — data starts as mock, only fetches when Re-sync is clicked
 
     const handleResync = async () => {
         if (syncing) return
@@ -261,10 +259,6 @@ export default function DataStatus() {
                                         <span className="text-[#9CA3A3] ml-1">{item.recordsUnit}</span>
                                     </div>
                                     <div>
-                                        <span className="text-[#9CA3A3] block text-[10px] uppercase tracking-wide mb-0.5">Namespace</span>
-                                        <span className="text-[#565959]">{item.namespace}</span>
-                                    </div>
-                                    <div>
                                         <span className="text-[#9CA3A3] block text-[10px] uppercase tracking-wide mb-0.5">RAG Status</span>
                                         <span className="inline-flex items-center gap-1 text-[#B7791F] font-medium">
                                             <CheckCircle size={11} />
@@ -280,8 +274,8 @@ export default function DataStatus() {
                 {/* Desktop table layout */}
                 <div className="hidden lg:block">
                     <div className="bg-[#F7F8FA] border-b border-[#E8EAED] px-6 py-3">
-                        <div className="grid grid-cols-[2.5fr_1fr_1.5fr_1.2fr_1.5fr_1.2fr] gap-4 items-center">
-                            {['SOURCE', 'STATUS', 'LAST SYNC', 'NAMESPACE', 'RECORDS PULLED', 'RAG STATUS'].map(col => (
+                        <div className="grid grid-cols-[2.5fr_1fr_1.5fr_1.5fr_1.2fr] gap-4 items-center">
+                            {['SOURCE', 'STATUS', 'LAST SYNC', 'RECORDS PULLED', 'RAG STATUS'].map(col => (
                                 <span key={col} className="text-[10px] font-semibold uppercase tracking-wide text-[#9CA3A3]">{col}</span>
                             ))}
                         </div>
@@ -296,7 +290,7 @@ export default function DataStatus() {
                         : sources.map((item, idx) => (
                             <div
                                 key={item.id}
-                                className={`grid grid-cols-[2.5fr_1fr_1.5fr_1.2fr_1.5fr_1.2fr] gap-4 items-center px-6 py-5 hover:bg-[#F7F8FA] transition-colors cursor-default ${idx < sources.length - 1 ? 'border-b border-[#E8EAED]' : ''}`}
+                                className={`grid grid-cols-[2.5fr_1fr_1.5fr_1.5fr_1.2fr] gap-4 items-center px-6 py-5 hover:bg-[#F7F8FA] transition-colors cursor-default ${idx < sources.length - 1 ? 'border-b border-[#E8EAED]' : ''}`}
                             >
                                 {/* Source */}
                                 <div className="flex items-center gap-3">
@@ -325,9 +319,6 @@ export default function DataStatus() {
                                     <div className="text-[13px] font-medium text-[#0F1111]">{item.lastSyncTime}</div>
                                     <div className="text-[11px] text-[#9CA3A3]">{item.lastSyncDate}</div>
                                 </div>
-
-                                {/* Namespace */}
-                                <div className="text-[13px] text-[#565959] font-mono">{item.namespace}</div>
 
                                 {/* Records Pulled */}
                                 <div>

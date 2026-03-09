@@ -70,11 +70,6 @@ export default function SectionNav() {
                         <span className="hidden sm:inline">Export</span>
                     </button>
 
-                    {/* Last generated — hidden on mobile */}
-                    <span className="text-[11px] sm:text-[12px] text-[#9CA3A3] hidden lg:inline">
-                        Last generated:
-                        <span className="text-[#565959] font-medium ml-1">{state.lastSyncInfo?.lastGlobalSyncTime || 'N/A'}</span>
-                    </span>
                 </div>
             </div>
         </div>
