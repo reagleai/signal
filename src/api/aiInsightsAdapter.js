@@ -318,7 +318,7 @@ export function mapSignalAiInsightsResponse(backendData) {
 export async function fetchAIInsights(options = {}) {
     try {
         const {
-            webhookUrl = 'https://n8n-fastest.protonaiagents.com/webhook/signal/run',
+            webhookUrl = '/api/ai-insights',
             method = 'POST',
             headers = { 'Content-Type': 'application/json' },
             payload = {}
@@ -337,8 +337,7 @@ export async function fetchAIInsights(options = {}) {
             time_window: payload.time_window ?? "7d",
             max_insights: payload.max_insights ?? 5,
             min_confidence: payload.min_confidence ?? 0.6,
-            request_id: payload.request_id ?? `signal-${Date.now()}`,
-            callback_url: payload.callback_url ?? null
+            request_id: payload.request_id ?? `signal-${Date.now()}`
         };
 
         console.log("AI Insights Adapter: Dispatching Request", requestBody);
@@ -354,8 +353,8 @@ export async function fetchAIInsights(options = {}) {
         }
 
         const data = await response.json();
-        console.log("AI Insights Adapter: Received Response", data);
 
+        // Removed `console.log` of raw backend payload to avoid leaking internal structures to client terminal
         return mapSignalAiInsightsResponse(data);
 
     } catch (error) {

@@ -1,0 +1,87 @@
+# Security & Performance Audit Report
+
+## A. Executive summary
+- **Security Posture Verdict:** **VULNERABLE**. The application leaks backend integration details to the public client. N8n webhook URLs are hardcoded or exposed via `VITE_` prefixed environment variables, and direct browser-to-webhook fetching is utilized. Console logs leak raw backend response payloads.
+- **Performance Posture Verdict:** **HEALTHY**. The application uses standard React state efficiently. Component structures are properly separated. No excessive bundle bloat from unused heavy dependencies. Minor optimizations are possible, but performance is generally solid for a dashboard of this size.
+- **Critical Blockers:** 
+  1. Removal of `VITE_` prefix from sensitive backend URLs and migration to a secure server-side proxy architecture.
+  2. Removal of raw console logs exposing the backend payload in production.
+
+## B. Critical security issues
+
+### 1. Direct Client-to-Backend Webhook Requests
+- **Severity:** High
+- **Exact file path:** [src/api/aiInsightsAdapter.js](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/api/aiInsightsAdapter.js), [src/config/endpoints.js](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/config/endpoints.js), [src/context/AppContext.jsx](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/context/AppContext.jsx)
+- **Exact problem:** The frontend makes HTTP [fetch](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/components/sections/DataStatus.jsx#114-152) requests directly to `https://n8n-fastest.protonaiagents.com/webhook/...` from the browser.
+- **Why it is risky:** Exposes the exact backend URL to the public Internet via the Network tab. It forces the backend to handle CORS globally. If authentication (e.g., Bearer tokens or webhook secrets) is required in the future, it cannot be safely implemented because secrets cannot be stored in the browser. 
+- **Exact fix:** Move these fetch calls behind Vercel Serverless Functions (`/api/ai-insights`, etc.) acting as a secure proxy.
+- **Can implement safely now:** Yes.
+
+### 2. Public Exposure of Backend Payload Logging
+- **Severity:** Medium
+- **Exact file path:** [src/api/aiInsightsAdapter.js](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/api/aiInsightsAdapter.js)
+- **Exact problem:** `console.log("AI Insights Adapter: Received Response", data);` prints the raw backend response in the browser console.
+- **Why it is risky:** The raw response may contain internal `namespaces`, unredacted `evidence_sample` texts, or debug metadata that the user should not see.
+- **Exact fix:** Remove `console.log` statements for responses, or wrap them in an `if (import.meta.env.DEV)` environment check.
+- **Can implement safely now:** Yes.
+
+### 3. Client Dictating Backend Callback Infrastructure
+- **Severity:** Low
+- **Exact file path:** [src/api/aiInsightsAdapter.js](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/api/aiInsightsAdapter.js) (Line 335)
+- **Exact problem:** The adapter allows the client to pass `callback_url` to the backend.
+- **Why it is risky:** The client should not dictate webhook orchestration or routing paths for the backend. 
+- **Exact fix:** Remove `callback_url` from the client-side payload. If required, append it inside the server-side proxy route.
+- **Can implement safely now:** Yes.
+
+## C. Secret exposure findings
+
+| Env Var Name | Used In | Client Exposed? | Recommendation |
+|---|---|---|---|
+| `VITE_N8N_BASE_URL` | [.env](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/.env), [endpoints.js](file:///c:/Users/reagl/OneDrive/Documents/Antigravity/signal-dashboard/src/config/endpoints.js) | **YES** | **RISKY_EXPOSED**. Rename to `N8N_BASE_URL` and move usage to Vercel `/api` routes. |
+| `RESEND_API_KEY` | `api/feedback.js` | **NO** | **SAFE_SERVER_ONLY**. Keep as is. |
+| Hardcoded Webhook URL | `AppContext.jsx`, `aiInsightsAdapter.js` | **YES** | **RISKY_EXPOSED**. Replace with internal `/api/ai-insights` endpoint. |
+
+**Action required:** `VITE_N8N_BASE_URL` must be moved server-side to prevent leaking the backend destination.
+
+## D. Webhook safety findings
+- **Direct browser access safe?** No.
+- **Proxy/server route required?** Yes. A Vercel API route (e.g. `/api/n8n-proxy`) must be introduced to mask the backend URL and securely attach any future authentication headers. 
+- **Auth/Header risk:** Currently none since the endpoint appears public. However, scaling this application securely demands moving this call server-side before introducing Bearer tokens.
+- **CORS concerns:** Direct browser fetches force the n8n backend to handle `OPTIONS` preflight requests and maintain a wide `Access-Control-Allow-Origin` policy. Proxies eliminate CORS issues for the backend.
+- **Recommended secure architecture:** 
+  1. React Client -> `POST /api/insights`
+  2. Vercel Serverless API -> securely fetches `process.env.N8N_BASE_URL + '/signal/run'` with hidden auth headers
+  3. API returns normalized JSON to Client.
+
+## E. Performance findings
+No critical performance issues found. The application is well-optimized.
+
+### 1. Hardcoded Polling Timeouts
+- **Severity:** Low
+- **Exact file path:** `src/context/AppContext.jsx`
+- **Exact bottleneck:** Recovery timeout logic statically fails runs older than 10 minutes (`600000ms`). In a real environment, async webhooks could take longer.
+- **Impact:** Negligible for mock/sync runs, but could prematurely mark a valid background job as failed.
+- **Exact fix:** In the future, implement a backend job-status polling mechanism instead of a flat timeout. No immediate change required.
+
+## F. Exact files to edit
+1. `.env`
+2. `src/config/endpoints.js`
+3. `src/api/aiInsightsAdapter.js`
+4. `src/context/AppContext.jsx`
+5. `src/components/sections/DataStatus.jsx`
+6. `src/components/sections/HighLevelMetrics.jsx`
+7. `api/ai-insights.js` (NEW)
+8. `api/metrics.js` (NEW)
+9. `api/data-sources.js` (NEW)
+
+## G. Safe implementation plan
+- **Phase 1 (Critical Security):** Remove `console.log` data exposures from `aiInsightsAdapter.js` and remove client-side `callback_url` parameters.
+- **Phase 2 (Webhook Hardening):** 
+  - Rename `VITE_N8N_BASE_URL` to `N8N_BASE_URL` in `.env`.
+  - Create Vercel Serverless functions (`api/ai-insights.js`, `api/metrics.js`, `api/data-sources.js`) to act as secure proxies.
+  - Update `fetch` calls in `aiInsightsAdapter.js`, `HighLevelMetrics.jsx`, and `DataStatus.jsx` to call the local `/api/*` endpoints instead of the public `n8n` endpoints.
+- **Phase 3 (Performance):** No immediate changes required; current rendering is safe and `masterProblems` is strictly capped by the backend payload.
+- **Phase 4 (Optional Cleanup):** Remove hardcoded webhook URLs scattered across comments or fallback values.
+
+## H. Optional patches
+Please let me know if you would like me to automatically execute the safe implementation plan now.

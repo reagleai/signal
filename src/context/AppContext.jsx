@@ -157,7 +157,7 @@ export function AppProvider({ children }) {
             try {
                 // Keep the global context alive while fetching
                 const result = await fetchAIInsights({
-                    webhookUrl: 'https://n8n-fastest.protonaiagents.com/webhook/signal/run',
+                    webhookUrl: '/api/ai-insights',
                     payload: { time_window: timeWindow || "7d", request_id: jobId }
                 });
                 dispatch({
