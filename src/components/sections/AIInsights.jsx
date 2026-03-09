@@ -60,6 +60,12 @@ export default function AIInsights() {
 
 
 
+    const summary = state.lastSyncInfo || {
+        activeSources: 5,
+        ragIndexed: 14,
+        recordsProcessed: '47,832'
+    }
+
     const confColor = (v) => v >= 85 ? '#067D62' : v >= 70 ? '#B7791F' : '#C0392B'
 
     return (
@@ -72,14 +78,14 @@ export default function AIInsights() {
                         <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL — SECTION 3</div>
                         <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">AI Insights</h1>
                         <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[560px]">
-                            5 problems synthesized by Signal's Master PM Node from 47,832 return events and 14 knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
+                            5 problems synthesized by Signal's Master PM Node from {summary.recordsProcessed} return events and {summary.ragIndexed} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
                         </p>
                     </div>
 
                     {/* DATE RANGE INDICATOR */}
                     <div className="flex items-center gap-2 mt-3 mb-6">
                         <Calendar size={14} className="text-[#FF9900]" />
-                        <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel} data · 47,832 events</span>
+                        <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel} data · {summary.recordsProcessed} events</span>
                     </div>
 
                     {/* ═══ MASTER PROBLEMS LIST ═══ */}
@@ -109,14 +115,9 @@ export default function AIInsights() {
 
                                             {/* Main content */}
                                             <div className="flex-1 min-w-0">
-                                                {/* ROW 1 — Title + badges */}
+                                                {/* ROW 1 — Title only */}
                                                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-2">
                                                     <span className="text-[14px] sm:text-[15px] font-semibold text-[#0F1111]">{problem.title}</span>
-                                                    {problem.isNew && <Badge variant="red" label="NEW ↑" />}
-                                                    {problem.isRecurring && <Badge variant="purple" label="Recurring" />}
-                                                    {problem.urgency === 'critical' && <Badge variant="red" label="⚡ Critical" />}
-                                                    {problem.urgency === 'high' && <Badge variant="amber" label="↑ High" />}
-                                                    {problem.urgency === 'medium' && <Badge variant="blue" label="→ Medium" />}
                                                 </div>
 
                                                 {/* ROW 2 — Signal metrics */}
@@ -145,19 +146,15 @@ export default function AIInsights() {
                                                     <div className="w-px h-4 bg-[#E8EAED] hidden sm:block" />
                                                     <div className="flex items-center">
                                                         <span className="text-[11px] sm:text-[12px] font-medium text-[#565959]">{problem.frequency} events</span>
-                                                        <span className="text-[10px] sm:text-[11px] text-red-500 ml-1">(+{problem.frequencyDelta} this week)</span>
                                                     </div>
                                                 </div>
 
-                                                {/* ROW 3 — Source chips + impact + citations */}
+                                                {/* ROW 3 — Source chips + citations */}
                                                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-2">
                                                     {problem.sources.map(s => (
                                                         <span key={s} className="bg-[#F7F8FA] border border-[#E8EAED] rounded-full px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] text-[#565959] font-medium">{s}</span>
                                                     ))}
-                                                    <span className="bg-[#FFF8EE] border border-[#FF9900]/20 rounded-full px-2 sm:px-2.5 py-1 text-[11px] sm:text-[12px] font-semibold text-[#B7791F] sm:ml-auto">
-                                                        Est. Impact: {problem.estimatedImpact}
-                                                    </span>
-                                                    <div className="flex gap-0.5">
+                                                    <div className="flex gap-0.5 sm:ml-auto">
                                                         {problem.citationIds.map(id => (
                                                             <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]); setSelectedProblemId(problem.id) }} />
                                                         ))}
@@ -239,9 +236,6 @@ export default function AIInsights() {
                                                         <PenLine size={14} /> Add to Notepad
                                                     </button>
                                                 )}
-                                                <button onClick={(e) => { e.stopPropagation(); setActiveCitations(problem.citationIds); setSelectedProblemId(problem.id) }} className="bg-white border border-[#E8EAED] rounded-lg px-4 py-2 text-[13px] text-[#565959] flex items-center justify-center gap-2 hover:border-[#FF9900] hover:text-[#0F1111] transition-colors min-h-[44px]">
-                                                    <ExternalLink size={14} /> View full evidence
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -269,65 +263,10 @@ export default function AIInsights() {
 
                 {/* ═══ RIGHT COLUMN (sticky) — stacks below on mobile ═══ */}
                 <div className="flex-[2] min-w-0 w-full xl:w-auto xl:sticky xl:top-4">
-                    {/* ── CARD 1: CITATION & EVIDENCE PANEL ── */}
-                    <div className="bg-white border border-[#E8EAED] rounded-xl shadow-sm flex flex-col" style={{ maxHeight: 'none' }}>
-                        {/* maxHeight applied via inner scroll area on xl only */}
-                        <div className="p-3 sm:p-4 border-b border-[#F0F0F0] flex-shrink-0 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <BookOpen size={16} className="text-[#FF9900]" />
-                                <h2 className="text-[13px] sm:text-[14px] font-semibold text-[#0F1111]">Supporting Evidence</h2>
-                            </div>
-                            {selected && (
-                                <span className="bg-[#FFF8EE] text-[#B7791F] border border-[#FF9900]/20 rounded-full px-2 sm:px-2.5 py-1 text-[10px] sm:text-[11px] font-medium max-w-[140px] sm:max-w-[180px] overflow-hidden whitespace-nowrap text-ellipsis" title={selected.title}>{selected.title}</span>
-                            )}
-                        </div>
-                        {!state.selectedProblemId ? (
-                            <div className="flex-1 flex items-center justify-center p-6 sm:p-8 text-center">
-                                <div>
-                                    <BookOpen size={36} className="text-[#E8EAED] mx-auto mb-3" />
-                                    <p className="text-[12px] sm:text-[13px] text-[#9CA3A3] leading-relaxed">Click any problem card to see its supporting evidence and citations.</p>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex-1 xl:overflow-y-auto xl:max-h-[36vh] p-3 sm:p-4 flex flex-col gap-3">
-                                {visibleCitations.map(citation => (
-                                    <div key={citation.id} className="bg-[#F7F8FA] rounded-xl" style={{ borderLeft: `3px solid ${citation.sourceColor}` }}>
-                                        <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 border-b border-[#F0F0F0] flex-wrap">
-                                            <CitationBadge number={citation.id} />
-                                            <span className="text-[10px] sm:text-[11px] font-semibold" style={{ color: citation.sourceColor }}>[{citation.source}]</span>
-                                            <span className="text-[10px] sm:text-[11px] text-[#9CA3A3] ml-1">{citation.ref}</span>
-                                            <span className="sm:ml-auto bg-white border border-[#E8EAED] rounded px-1.5 py-0.5 text-[9px] sm:text-[10px] text-[#565959]">{citation.type}</span>
-                                        </div>
-                                        <div className="px-2.5 sm:px-3 py-2.5 sm:py-3">
-                                            {citation.tableData ? (
-                                                <div className="w-full bg-white rounded-lg border border-[#E8EAED] overflow-x-auto text-[10px] sm:text-[11px]">
-                                                    <div className={`grid px-2.5 sm:px-3 py-2 border-b bg-[#F7F8FA]`} style={{ gridTemplateColumns: `repeat(${citation.tableData.headers.length}, 1fr)`, minWidth: `${citation.tableData.headers.length * 80}px` }}>
-                                                        {citation.tableData.headers.map(h => (
-                                                            <span key={h} className="font-semibold text-[#565959]">{h}</span>
-                                                        ))}
-                                                    </div>
-                                                    {citation.tableData.rows.map((row, ri) => (
-                                                        <div key={ri} className={`grid px-2.5 sm:px-3 py-2 text-[#0F1111] hover:bg-[#F7F8FA] ${ri < citation.tableData.rows.length - 1 ? 'border-b border-[#F0F0F0]' : ''}`} style={{ gridTemplateColumns: `repeat(${citation.tableData.headers.length}, 1fr)`, minWidth: `${citation.tableData.headers.length * 80}px` }}>
-                                                            {row.map((cell, ci) => (
-                                                                <span key={ci} className={ci === 0 ? 'font-medium' : ''}>{cell}</span>
-                                                            ))}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <div className="bg-white rounded-lg p-2.5 sm:p-3" style={{ borderLeft: `2px solid ${citation.sourceColor}` }}>
-                                                    <p className="text-[10px] sm:text-[11px] text-[#565959] italic leading-relaxed">{citation.preview}</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+
 
                     {/* ── CARD 2: INTELLIGENT NOTEPAD ── */}
-                    <div className="bg-white border border-[#E8EAED] rounded-xl shadow-sm flex flex-col mt-4">
+                    <div className="bg-white border border-[#E8EAED] rounded-xl shadow-sm flex flex-col">
                         <div className="p-3 sm:p-4 border-b border-[#F0F0F0] flex-shrink-0 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <PenLine size={16} className="text-[#FF9900]" />
@@ -359,7 +298,6 @@ export default function AIInsights() {
                                         </div>
                                         <div className="flex flex-wrap gap-2 sm:gap-4 mb-3">
                                             <span className="text-[11px] sm:text-[12px] font-medium text-[#565959]">Confidence: {item.confidence}%</span>
-                                            <span className="text-[11px] sm:text-[12px] font-semibold text-[#B7791F]">Impact: {item.estimatedImpact}</span>
                                         </div>
                                         <div className="flex flex-wrap gap-1 mb-3">
                                             {item.reasonCodes.map(code => (
