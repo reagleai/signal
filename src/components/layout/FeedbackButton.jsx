@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageSquare, X, AlertCircle } from 'lucide-react'
-import { useDurableAction } from '../../context/AppContext'
 
 const categories = [
     'Feedback', 'Bug report', 'Critique', 'Suggestion',
@@ -60,27 +59,35 @@ export default function FeedbackButton() {
             return
         }
 
+        // Description is explicitly optional in V1
+
+        setStatus('submitting')
+
         try {
-            await action.runAction(async () => {
-                const page = window.location.pathname;
-                const res = await fetch('/api/feedback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, category: selectedCategory, description, page })
-                })
-                if (!res.ok) throw new Error('Server returned an error')
+            // Optional: send the current page path to help contextualize the feedback
+            const page = window.location.pathname;
+
+            const res = await fetch('/api/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, category: selectedCategory, description, page })
             })
 
-            // Run action automatically sets status to 'completed' (which we aliased to 'success')
+            if (!res.ok) {
+                throw new Error('Server returned an error')
+            }
+
+            setStatus('success')
             setTimeout(() => {
                 setOpen(false)
-                action.resetAction()
+                setStatus('idle')
                 setName('')
                 setEmail('')
                 setSelectedCategory('')
                 setDescription('')
             }, 2500)
         } catch (err) {
+            setStatus('error')
             setErrorMsg('Failed to send feedback. Please try again.')
         }
     }

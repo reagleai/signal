@@ -14,7 +14,13 @@ const defaultState = {
     notePadItems: [],
     activeCitations: [],
     lastSyncInfo: null,  // { lastGlobalSyncTime, activeSources, ragIndexed, recordsProcessed }
-    durableActions: {}, // { [actionKey]: { status: 'idle'|'running'|'completed'|'failed'|'recovering', jobId, startedAt, error, data } }
+    aiRunState: {
+        status: 'idle', // 'idle' | 'running' | 'completed' | 'failed' | 'recovering'
+        jobId: null,
+        startedAt: null,
+        error: null,
+        lastKnownData: null
+    },
     preferences: {
         defaultSection: null,
         lastVisited: null,
@@ -50,17 +56,8 @@ function reducer(state, action) {
             return { ...state, activeCitations: action.payload }
         case 'SET_LAST_SYNC_INFO':
             return { ...state, lastSyncInfo: action.payload }
-        case 'SET_DURABLE_ACTION':
-            return {
-                ...state,
-                durableActions: {
-                    ...state.durableActions,
-                    [action.payload.key]: {
-                        ...(state.durableActions[action.payload.key] || {}),
-                        ...action.payload.state
-                    }
-                }
-            }
+        case 'SET_AI_RUN_STATE':
+            return { ...state, aiRunState: { ...state.aiRunState, ...action.payload } }
         case 'SET_PREFERENCES':
             return { ...state, preferences: { ...state.preferences, ...action.payload } }
         default:
@@ -82,19 +79,17 @@ export function AppProvider({ children }) {
             if (savedSync) {
                 hydrated.lastSyncInfo = JSON.parse(savedSync)
             }
-            const savedActions = localStorage.getItem('signal-durable-actions')
-            if (savedActions) {
-                const parsedActions = JSON.parse(savedActions)
-                // Degrade any 'running' actions that got interrupted by a reload
-                Object.keys(parsedActions).forEach(key => {
-                    const action = parsedActions[key]
-                    if (action.status === 'running') {
-                        const isStale = (Date.now() - new Date(action.startedAt).getTime()) > 600000;
-                        action.status = isStale ? 'failed' : 'recovering';
-                        action.error = isStale ? "Run timed out." : "Action was interrupted by a page reload. We cannot confirm the active status.";
-                    }
-                })
-                hydrated.durableActions = parsedActions
+            const savedAiRun = localStorage.getItem('signal-ai-run-state')
+            if (savedAiRun) {
+                const parsedAiRun = JSON.parse(savedAiRun)
+                // If we hard rehydrated while "running", the connection was killed. Move to recovering.
+                if (parsedAiRun.status === 'running') {
+                    // Timeout logic: if it's older than 10 mins, just fail it or return to idle.
+                    const isStale = (Date.now() - new Date(parsedAiRun.startedAt).getTime()) > 600000;
+                    parsedAiRun.status = isStale ? 'failed' : 'recovering';
+                    parsedAiRun.error = isStale ? "Run timed out." : "Analysis was interrupted by a page reload. We cannot confirm the active status.";
+                }
+                hydrated.aiRunState = parsedAiRun
             }
         } catch { }
         return hydrated
@@ -109,12 +104,12 @@ export function AppProvider({ children }) {
         }
     }, [state.lastSyncInfo])
 
-    // Save durable actions to localStorage on change
+    // Save ai run state to localStorage on change
     useEffect(() => {
         try {
-            localStorage.setItem('signal-durable-actions', JSON.stringify(state.durableActions))
+            localStorage.setItem('signal-ai-run-state', JSON.stringify(state.aiRunState))
         } catch { }
-    }, [state.durableActions])
+    }, [state.aiRunState])
 
     // Save preferences to localStorage on change
     useEffect(() => {
@@ -143,12 +138,40 @@ export function AppProvider({ children }) {
         removeFromNotepad: (id) => dispatch({ type: 'REMOVE_FROM_NOTEPAD', payload: id }),
         setActiveCitations: (ids) => dispatch({ type: 'SET_ACTIVE_CITATIONS', payload: ids }),
         setLastSyncInfo: (info) => dispatch({ type: 'SET_LAST_SYNC_INFO', payload: info }),
+        setAiRunState: (runState) => dispatch({ type: 'SET_AI_RUN_STATE', payload: runState }),
+        startAiAnalysis: async (timeWindow) => {
+            // Guard against multiple clicks
+            if (state.aiRunState.status === 'running') return;
 
-        // Generalized single-action updater
-        setDurableAction: (key, actionState) => dispatch({
-            type: 'SET_DURABLE_ACTION',
-            payload: { key, state: actionState }
-        }),
+            const jobId = `job-${Date.now()}`;
+            dispatch({
+                type: 'SET_AI_RUN_STATE',
+                payload: {
+                    status: 'running',
+                    jobId,
+                    startedAt: new Date().toISOString(),
+                    error: null
+                }
+            });
+
+            try {
+                // Keep the global context alive while fetching
+                const result = await fetchAIInsights({
+                    webhookUrl: '/api/ai-insights',
+                    payload: { time_window: timeWindow || "7d", request_id: jobId }
+                });
+                dispatch({
+                    type: 'SET_AI_RUN_STATE',
+                    payload: { status: 'completed', lastKnownData: result }
+                });
+            } catch (err) {
+                console.error("Global Webhook fetch failed:", err);
+                dispatch({
+                    type: 'SET_AI_RUN_STATE',
+                    payload: { status: 'failed', error: 'Live API unavailable. Could not complete analysis.' }
+                });
+            }
+        }
     }
 
     return (
@@ -162,67 +185,4 @@ export function useApp() {
     const context = useContext(AppContext)
     if (!context) throw new Error('useApp must be used within AppProvider')
     return context
-}
-
-/**
- * Hook to consume a shared durable action.
- * Survives component unmounts and tracks state globally.
- */
-export function useDurableAction(actionKey) {
-    const { state, setDurableAction } = useApp()
-
-    // Default struct if it has never been triggered
-    const actionState = state.durableActions[actionKey] || {
-        status: 'idle',
-        startedAt: null,
-        error: null,
-        data: null
-    }
-
-    const runAction = async (promiseFn) => {
-        // Prevent duplicate execution if already running globally
-        if (actionState.status === 'running') return;
-
-        setDurableAction(actionKey, {
-            status: 'running',
-            startedAt: new Date().toISOString(),
-            error: null
-        })
-
-        try {
-            // Unmount-safe execution: modifies global context
-            const result = await promiseFn()
-
-            setDurableAction(actionKey, {
-                status: 'completed',
-                data: result
-            })
-            return result
-        } catch (err) {
-            setDurableAction(actionKey, {
-                status: 'failed',
-                error: err.message || 'Operation failed'
-            })
-            throw err
-        }
-    }
-
-    const setStatus = (newStatusOrPartial) => {
-        if (typeof newStatusOrPartial === 'string') {
-            setDurableAction(actionKey, { status: newStatusOrPartial })
-        } else {
-            setDurableAction(actionKey, newStatusOrPartial)
-        }
-    }
-
-    const resetAction = () => {
-        setDurableAction(actionKey, { status: 'idle', data: null, error: null })
-    }
-
-    return {
-        ...actionState,     // status, startedAt, error, data
-        runAction,          // method to wrap async operations safely
-        setStatus,          // manual override
-        resetAction         // clear back to idle
-    }
 }

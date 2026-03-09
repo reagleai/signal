@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { X, Send, Copy, Check } from 'lucide-react'
-import { useDurableAction } from '../../context/AppContext'
 
 export default function ShareModal({ isOpen, onClose, notePadItems = [], citationLibrary = [], rangeLabel = '', addToast }) {
     const [copied, setCopied] = useState(false)
-    const shareAction = useDurableAction('share-brief')
-    const sending = shareAction.status === 'running'
+    const [sending, setSending] = useState(false)
     const [recipients, setRecipients] = useState('')
     const [note, setNote] = useState('')
     const modalRef = useRef(null)
@@ -55,16 +53,13 @@ Supporting Evidence: Citations ${item.citationIds.join(', ')}
     }
 
     const handleSend = async () => {
-        try {
-            await shareAction.runAction(async () => {
-                await new Promise(r => setTimeout(r, 900))
-            })
-            onClose()
-            if (addToast) {
-                addToast({ id: Date.now(), type: 'success', message: 'Brief sent to stakeholders!' })
-            }
-            setTimeout(() => shareAction.resetAction(), 500)
-        } catch (e) { }
+        setSending(true)
+        await new Promise(r => setTimeout(r, 900))
+        setSending(false)
+        onClose()
+        if (addToast) {
+            addToast({ id: Date.now(), type: 'success', message: 'Brief sent to stakeholders!' })
+        }
     }
 
     return (
