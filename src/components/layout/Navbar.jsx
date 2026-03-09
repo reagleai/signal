@@ -51,9 +51,9 @@ export default function Navbar() {
 
                 {/* Welcome + Avatar */}
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <span className="hidden md:inline text-[13px] text-white/70">Welcome, Sarah</span>
+                    <span className="hidden md:inline text-[13px] text-white/70">Welcome, Ajay</span>
                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#FF9900] border-2 border-[#FF9900]/50 flex items-center justify-center text-[13px] font-bold text-white">
-                        S
+                        A
                     </div>
                 </div>
             </div>
