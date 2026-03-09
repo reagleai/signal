@@ -146,7 +146,34 @@ export default function HighLevelMetrics() {
 
     return (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8" id="section-metrics" role="tabpanel" aria-label="High-Level Metrics">
-            {/* ── PAGE HEADER ── */}
+            {/* ── V2 FROSTED OVERLAY ── */}
+            <div className="relative group">
+                <div className="absolute inset-0 z-20 pointer-events-none">
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] rounded-xl pointer-events-auto"></div>
+                    
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex justify-center pt-24 sm:pt-40">
+                        <div className="bg-white/95 backdrop-blur-md border border-[#E8EAED] shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center max-w-[420px] mx-4 pointer-events-auto h-fit">
+                            <div className="flex items-center gap-2.5 mb-4">
+                                <span className="bg-[#FFF8EE] text-[#B7791F] border border-[#FF9900]/20 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">
+                                    Version 2
+                                </span>
+                                <span className="bg-[#F8F9FA] text-[#565959] border border-[#E8EAED] text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">
+                                    Mock Data
+                                </span>
+                            </div>
+                            <h3 className="text-[18px] sm:text-[20px] font-bold text-[#0F1111] mb-2.5">
+                                KPI & Metrics
+                            </h3>
+                            <p className="text-[13px] sm:text-[14px] text-[#565959] leading-relaxed">
+                                This section currently contains mock data and will be fully built in Version 2.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── CONTENT (Translucent & Unclickable) ── */}
+                <div className="opacity-[0.65] pointer-events-none select-none relative z-10 transition-opacity duration-300">
+                    {/* ── PAGE HEADER ── */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 sm:mb-8">
                 <div>
                     <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">
@@ -480,6 +507,8 @@ export default function HighLevelMetrics() {
                     "How does this week compare to last week?"
                 ]}
             />
+                </div>
+            </div>
         </div>
     )
 }
