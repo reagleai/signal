@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { RefreshCw, CheckCircle, XCircle, Brain, Zap } from 'lucide-react'
-import { useApp } from '../../context/AppContext'
+import { useApp, useDurableAction } from '../../context/AppContext'
 import { integrations as mockIntegrations } from '../../data/mockData'
 import { endpoints } from '../../config/endpoints'
 import MetricCard from '../shared/MetricCard'
@@ -107,8 +107,10 @@ export default function DataStatus() {
         lastGlobalSyncTime: '—',
         lastGlobalSyncTimeRaw: null
     }
+
     const [loading, setLoading] = useState(false)
-    const [syncing, setSyncing] = useState(false)
+    const syncAction = useDurableAction('data-resync')
+    const syncing = syncAction.status === 'running'
     const [lastError, setLastError] = useState(null)
 
     async function fetchData() {
@@ -154,11 +156,13 @@ export default function DataStatus() {
 
     const handleResync = async () => {
         if (syncing) return
-        setSyncing(true)
         addToast({ id: Date.now(), type: 'info', message: 'Re-syncing all sources…' })
-        await fetchData()
-        addToast({ id: Date.now(), type: 'success', message: 'Sources refreshed.' })
-        setSyncing(false)
+        try {
+            await syncAction.runAction(async () => await fetchData())
+            addToast({ id: Date.now(), type: 'success', message: 'Sources refreshed.' })
+        } catch (e) {
+            // Error is handled gracefully by durableAction / layout
+        }
     }
 
     // ── Loading skeleton ──────────────────────────────────────

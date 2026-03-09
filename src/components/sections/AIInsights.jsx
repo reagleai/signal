@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Calendar, ChevronDown, PenLine, ExternalLink, BookOpen, FileText, Clock, Send, X, AlertCircle, RefreshCw } from 'lucide-react'
-import { useApp } from '../../context/AppContext'
-import { reasonCodeColors } from '../../data/mockData'
+import { CheckCircle, AlertCircle, RefreshCw, XCircle, Brain, Target, ShieldAlert, Sparkles, BookOpen } from 'lucide-react'
+import { useApp, useDurableAction } from '../../context/AppContext'
 import { fetchAIInsights } from '../../api/aiInsightsAdapter'
 import Badge from '../shared/Badge'
 import CitationBadge from '../shared/CitationBadge'
@@ -27,19 +26,27 @@ export default function AIInsights() {
         updateNotepadItem,
         removeFromNotepad,
         addToast,
-        startAiAnalysis,
-        setAiRunState
     } = useApp()
+
+    const aiAction = useDurableAction('ai-insights')
     const [expandedId, setExpandedId] = useState(null)
     const [shareOpen, setShareOpen] = useState(false)
 
-    const { status, error, lastKnownData } = state.aiRunState;
-    const isLoading = status === 'running';
-    const isRecovering = status === 'recovering';
+    const isLoading = aiAction.status === 'running';
+    const isRecovering = aiAction.status === 'recovering';
+    const error = aiAction.error;
+    const status = aiAction.status;
+    const lastKnownData = aiAction.data;
     const hasData = !!lastKnownData;
 
     const handleAnalyze = async () => {
-        await startAiAnalysis(state.dateRange.preset);
+        const jobId = `job-${Date.now()}`;
+        await aiAction.runAction(async () => {
+            return await fetchAIInsights({
+                webhookUrl: '/api/ai-insights',
+                payload: { time_window: state.dateRange.preset, request_id: jobId }
+            });
+        });
     }
 
     const masterProblems = lastKnownData?.masterProblems || []
@@ -158,7 +165,7 @@ export default function AIInsights() {
                                 Restart Analysis
                             </button>
                             {hasData && (
-                                <button className="mt-4 text-[#565959] text-[12px] underline" onClick={() => setAiRunState({ status: 'completed' })}>
+                                <button className="mt-4 text-[#565959] text-[12px] underline" onClick={() => aiAction.setStatus('completed')}>
                                     Dismiss and view last successful results
                                 </button>
                             )}
