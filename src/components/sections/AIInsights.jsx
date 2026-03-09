@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, ChevronDown, PenLine, ExternalLink, BookOpen, FileText, Clock, Send, X } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
-import { masterProblems, citationLibrary, reasonCodeColors } from '../../data/mockData'
+import { masterProblems as mockMasterProblems, citationLibrary as mockCitationLibrary, reasonCodeColors } from '../../data/mockData'
+import { endpoints } from '../../config/endpoints'
 import Badge from '../shared/Badge'
 import CitationBadge from '../shared/CitationBadge'
 import ChatBot from '../shared/ChatBot'
@@ -10,26 +11,45 @@ import ShareModal from '../shared/ShareModal'
 // Source dot colors
 const sourceColors = {
     "Zendesk": "#03363D",
+    "Zendesk Support": "#03363D",
     "App Store Reviews": "#0D96F6",
     "DW": "#FF9900",
-    "Productboard": "#8B5CF6"
+    "Data Warehouse": "#FF9900",
+    "Productboard": "#8B5CF6",
+    "Fraud & Abuse": "#C0392B"
 }
 
 export default function AIInsights() {
     const { state, setActiveSection, setSelectedProblemId, setActiveCitations, addToNotepad, updateNotepadItem, removeFromNotepad, addToast } = useApp()
     const [expandedId, setExpandedId] = useState(null)
     const [shareOpen, setShareOpen] = useState(false)
+    const [masterProblems, setMasterProblems] = useState(mockMasterProblems)
+    const [citationLibrary, setCitationLibrary] = useState(mockCitationLibrary)
+    const [loading, setLoading] = useState(true)
 
-    const rangeLabel =
-        state.dateRange.preset === '7d' ? 'Past 7 Days' :
-            state.dateRange.preset === '30d' ? 'Past 30 Days' :
-                state.dateRange.preset === '90d' ? 'Past 90 Days' :
-                    `${state.dateRange.startDate?.toLocaleDateString()} – ${state.dateRange.endDate?.toLocaleDateString()}`
+    // Fetch insights from n8n, fallback to mock
+    useEffect(() => {
+        let cancelled = false
+        async function load() {
+            setLoading(true)
+            try {
+                const res = await fetch(endpoints.insights)
+                if (!res.ok) throw new Error(`HTTP ${res.status}`)
+                const json = await res.json()
+                if (!cancelled && json.masterProblems?.length) {
+                    setMasterProblems(json.masterProblems)
+                    if (json.citationLibrary?.length) setCitationLibrary(json.citationLibrary)
+                }
+            } catch {
+                // Keep mock data
+            } finally {
+                if (!cancelled) setLoading(false)
+            }
+        }
+        load()
+        return () => { cancelled = true }
+    }, [])
 
-    const selected = masterProblems.find(p => p.id === state.selectedProblemId)
-    const visibleCitations = state.activeCitations
-        .map(id => citationLibrary.find(c => c.id === id))
-        .filter(Boolean)
 
     const isInNotepad = (problemId) => state.notePadItems.some(i => i.problemId === problemId)
 

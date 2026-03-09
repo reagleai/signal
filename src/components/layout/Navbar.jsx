@@ -1,4 +1,9 @@
+import { useApp } from '../../context/AppContext'
+
 export default function Navbar() {
+    const { state } = useApp()
+    const syncTime = state.lastSyncInfo?.lastGlobalSyncTime || 'Loading…'
+
     return (
         <header className="h-14 sm:h-16 bg-[#232F3E] px-4 sm:px-8 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.25)] flex-shrink-0 z-50">
             {/* Left group */}
@@ -31,7 +36,7 @@ export default function Navbar() {
                 <div className="hidden sm:flex items-center gap-2 bg-white/10 rounded-full px-3 py-2">
                     <span className="w-2 h-2 rounded-full bg-[#067D62] pulse-dot" />
                     <span className="text-[12px] text-white/80">
-                        Data fresh · Updated today 06:33 AM
+                        Data fresh · {syncTime}
                     </span>
                 </div>
 

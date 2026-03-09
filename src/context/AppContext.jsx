@@ -13,6 +13,7 @@ const defaultState = {
     selectedProblemId: null,
     notePadItems: [],
     activeCitations: [],
+    lastSyncInfo: null,  // { lastGlobalSyncTime, activeSources, ragIndexed, recordsProcessed }
     preferences: {
         defaultSection: null,
         lastVisited: null,
@@ -46,6 +47,8 @@ function reducer(state, action) {
             return { ...state, notePadItems: state.notePadItems.filter(item => item.problemId !== action.payload) }
         case 'SET_ACTIVE_CITATIONS':
             return { ...state, activeCitations: action.payload }
+        case 'SET_LAST_SYNC_INFO':
+            return { ...state, lastSyncInfo: action.payload }
         case 'SET_PREFERENCES':
             return { ...state, preferences: { ...state.preferences, ...action.payload } }
         default:
@@ -91,6 +94,7 @@ export function AppProvider({ children }) {
         updateNotepadItem: (id, changes) => dispatch({ type: 'UPDATE_NOTEPAD_ITEM', payload: { id, changes } }),
         removeFromNotepad: (id) => dispatch({ type: 'REMOVE_FROM_NOTEPAD', payload: id }),
         setActiveCitations: (ids) => dispatch({ type: 'SET_ACTIVE_CITATIONS', payload: ids }),
+        setLastSyncInfo: (info) => dispatch({ type: 'SET_LAST_SYNC_INFO', payload: info }),
     }
 
     return (

@@ -7,9 +7,11 @@ import {
 } from 'recharts'
 import { useApp } from '../../context/AppContext'
 import {
-    metricsData, returnReasonCodes, weeklyTrend,
-    refundCategories, returnRateTrend, growingSubReasons
+    metricsData as mockMetricsData, returnReasonCodes as mockReturnReasonCodes,
+    weeklyTrend as mockWeeklyTrend, refundCategories as mockRefundCategories,
+    returnRateTrend as mockReturnRateTrend, growingSubReasons as mockGrowingSubReasons
 } from '../../data/mockData'
+import { endpoints } from '../../config/endpoints'
 import MetricCard from '../shared/MetricCard'
 import ChatBot from '../shared/ChatBot'
 
@@ -49,12 +51,39 @@ export default function HighLevelMetrics() {
     const { state } = useApp()
     const [activeReasonCode, setActiveReasonCode] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [metrics, setMetrics] = useState(null)
+    const [chartData, setChartData] = useState(null)
 
+    const rangeKey = state.dateRange.preset === 'custom' ? '7d' : state.dateRange.preset
+
+    // Fetch KPI metrics + chart data from n8n, fallback to mock
     useEffect(() => {
-        setLoading(true)
-        const t = setTimeout(() => setLoading(false), 1000)
-        return () => clearTimeout(t)
-    }, [state.dateRange.preset])
+        let cancelled = false
+        async function load() {
+            setLoading(true)
+            try {
+                const [kpiRes, chartRes] = await Promise.all([
+                    fetch(`${endpoints.metrics}?range=${rangeKey}`),
+                    fetch(`${endpoints.metricsCharts}?range=${rangeKey}`)
+                ])
+                const kpi = kpiRes.ok ? await kpiRes.json() : null
+                const charts = chartRes.ok ? await chartRes.json() : null
+                if (!cancelled) {
+                    setMetrics(kpi && kpi.returnRate ? kpi : mockMetricsData[rangeKey])
+                    setChartData(charts && charts.returnReasonCodes ? charts : null)
+                }
+            } catch {
+                if (!cancelled) {
+                    setMetrics(mockMetricsData[rangeKey])
+                    setChartData(null)
+                }
+            } finally {
+                if (!cancelled) setLoading(false)
+            }
+        }
+        load()
+        return () => { cancelled = true }
+    }, [rangeKey])
 
     // Cross-section navigation: open drill-down from AI Insights
     useEffect(() => {
@@ -66,8 +95,12 @@ export default function HighLevelMetrics() {
         }
     }, [])
 
-    const rangeKey = state.dateRange.preset === 'custom' ? '7d' : state.dateRange.preset
-    const metrics = metricsData[rangeKey]
+    const metricsObj = metrics || mockMetricsData[rangeKey]
+    const returnReasonCodes = chartData?.returnReasonCodes || mockReturnReasonCodes
+    const weeklyTrend = chartData?.weeklyTrend?.length ? chartData.weeklyTrend : mockWeeklyTrend
+    const refundCategories = chartData?.refundCategories?.length ? chartData.refundCategories : mockRefundCategories
+    const returnRateTrend = chartData?.returnRateTrend?.length ? chartData.returnRateTrend : mockReturnRateTrend
+    const growingSubReasons = chartData?.growingSubReasons?.length ? chartData.growingSubReasons : mockGrowingSubReasons
 
     const rangeLabel =
         state.dateRange.preset === '7d' ? 'Past 7 Days' :
@@ -133,22 +166,22 @@ export default function HighLevelMetrics() {
 
             {/* ── ROW 1 — 8 METRIC CARDS ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <MetricCard label="Return Rate" value={`${metrics.returnRate.value}`} unit="%" delta={metrics.returnRate.delta} deltaLabel="vs prior period" direction={metrics.returnRate.direction} source="Data Warehouse" />
-                <MetricCard label="Return Volume" value={metrics.returnVolume.value.toLocaleString()} delta={metrics.returnVolume.delta} deltaLabel="vs prior period" direction={metrics.returnVolume.direction} source="Data Warehouse" />
-                <MetricCard label="Refund Amount" value={`$${metrics.refundAmount.value}`} unit="M" delta={metrics.refundAmount.delta} deltaLabel="vs prior period" direction={metrics.refundAmount.direction} source="Data Warehouse" />
-                <MetricCard label="Refund Approval Rate" value={`${metrics.refundApprovalRate.value}`} unit="%" delta={metrics.refundApprovalRate.delta} deltaLabel="vs prior period" direction={metrics.refundApprovalRate.direction} source="Tableau" />
+                <MetricCard label="Return Rate" value={`${metricsObj.returnRate.value}`} unit="%" delta={metricsObj.returnRate.delta} deltaLabel="vs prior period" direction={metricsObj.returnRate.direction} source="Data Warehouse" />
+                <MetricCard label="Return Volume" value={metricsObj.returnVolume.value.toLocaleString()} delta={metricsObj.returnVolume.delta} deltaLabel="vs prior period" direction={metricsObj.returnVolume.direction} source="Data Warehouse" />
+                <MetricCard label="Refund Amount" value={`$${metricsObj.refundAmount.value}`} unit="M" delta={metricsObj.refundAmount.delta} deltaLabel="vs prior period" direction={metricsObj.refundAmount.direction} source="Data Warehouse" />
+                <MetricCard label="Refund Approval Rate" value={`${metricsObj.refundApprovalRate.value}`} unit="%" delta={metricsObj.refundApprovalRate.delta} deltaLabel="vs prior period" direction={metricsObj.refundApprovalRate.direction} source="Tableau" />
                 <div>
-                    <MetricCard label="Fraud Flag Rate" value={`${metrics.fraudFlagRate.value}`} unit="%" delta={metrics.fraudFlagRate.delta} deltaLabel="vs prior period" direction={metrics.fraudFlagRate.direction} source="Data Warehouse" />
-                    {metrics.fraudFlagRate.value > 2.5 && (
+                    <MetricCard label="Fraud Flag Rate" value={`${metricsObj.fraudFlagRate.value}`} unit="%" delta={metricsObj.fraudFlagRate.delta} deltaLabel="vs prior period" direction={metricsObj.fraudFlagRate.direction} source="Data Warehouse" />
+                    {metricsObj.fraudFlagRate.value > 2.5 && (
                         <div className="text-[10px] text-[#B7791F] font-medium mt-1 ml-1 flex items-center gap-1">
                             <AlertTriangle size={10} />
                             Above 2.5% threshold
                         </div>
                     )}
                 </div>
-                <MetricCard label="Avg. Resolution" value={`${metrics.avgResolutionDays.value}`} unit="d" delta={metrics.avgResolutionDays.delta} deltaLabel="vs prior period" direction={metrics.avgResolutionDays.direction} source="Zendesk" />
-                <MetricCard label="Returnable Items" value={`${metrics.returnableRate.value}`} unit="%" delta={metrics.returnableRate.delta} deltaLabel="vs prior period" direction={metrics.returnableRate.direction} source="Data Warehouse" />
-                <MetricCard label="Non-Returnable Items" value={`${metrics.nonReturnableRate.value}`} unit="%" delta={metrics.nonReturnableRate.delta} deltaLabel="vs prior period" direction={metrics.nonReturnableRate.direction} source="Data Warehouse" />
+                <MetricCard label="Avg. Resolution" value={`${metricsObj.avgResolutionDays.value}`} unit="d" delta={metricsObj.avgResolutionDays.delta} deltaLabel="vs prior period" direction={metricsObj.avgResolutionDays.direction} source="Zendesk" />
+                <MetricCard label="Returnable Items" value={`${metricsObj.returnableRate.value}`} unit="%" delta={metricsObj.returnableRate.delta} deltaLabel="vs prior period" direction={metricsObj.returnableRate.direction} source="Data Warehouse" />
+                <MetricCard label="Non-Returnable Items" value={`${metricsObj.nonReturnableRate.value}`} unit="%" delta={metricsObj.nonReturnableRate.delta} deltaLabel="vs prior period" direction={metricsObj.nonReturnableRate.direction} source="Data Warehouse" />
             </div>
 
             {/* ── ROW 2 — TREND + SPARKLINE ── */}
