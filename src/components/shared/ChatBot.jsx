@@ -128,7 +128,7 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
                         if (msg.role === 'user') {
                             return (
                                 <div key={i} className="flex justify-end">
-                                    <div className="bg-[#232F3E] text-white rounded-xl rounded-tr-sm px-4 py-2.5 text-[13px] max-w-[90%] sm:max-w-[80%]">
+                                    <div className="bg-[#232F3E] text-white rounded-xl rounded-tr-sm px-4 py-2.5 text-[13px] max-w-[90%] sm:max-w-[80%] whitespace-pre-wrap">
                                         {msg.text}
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
                                         <span className="text-[11px] font-semibold text-[#FF9900]">Signal AI</span>
                                         <span className="text-[10px] text-[#9CA3A3]">{formatTime(msg.time)}</span>
                                     </div>
-                                    <div className="bg-[#F7F8FA] border border-[#E8EAED] rounded-xl rounded-tl-sm px-4 py-3 text-[13px] text-[#0F1111] leading-relaxed max-w-[95%] sm:max-w-[90%]">
+                                    <div className="bg-[#F7F8FA] border border-[#E8EAED] rounded-xl rounded-tl-sm px-4 py-3 text-[13px] text-[#0F1111] leading-relaxed max-w-[95%] sm:max-w-[90%] whitespace-pre-wrap">
                                         {renderMessageWithCitations(msg.text)}
                                     </div>
                                     {/* Citations hidden for V1 
