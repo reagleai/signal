@@ -20,17 +20,8 @@ export default async function handler(req, res) {
 
     // Description is optional in V1
 
-    // Enforce internal API key to prevent public abuse
-    const providedKey = req.headers['x-internal-api-key'];
-    if (!providedKey || providedKey !== process.env.VITE_INTERNAL_API_KEY) {
-        return res.status(401).json({ error: 'Unauthorized: Missing or invalid internal API key.' });
-    }
-
     // Retrieve webhook URL from server environment correctly
-    const feedbackWebhookUrl = process.env.N8N_FEEDBACK_WEBHOOK;
-    if (!feedbackWebhookUrl) {
-        return res.status(500).json({ error: 'Server misconfiguration: Missing N8N_FEEDBACK_WEBHOOK.' });
-    }
+    const feedbackWebhookUrl = process.env.N8N_FEEDBACK_WEBHOOK || 'https://n8n-fastest.protonaiagents.com/webhook/feedback-received';
 
     // Construct exactly payload requested by the user
     const payload = {

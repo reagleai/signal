@@ -62,10 +62,9 @@ export default function HighLevelMetrics() {
         async function load() {
             setLoading(true)
             try {
-                const headers = { 'x-internal-api-key': import.meta.env.VITE_INTERNAL_API_KEY };
                 const [kpiRes, chartRes] = await Promise.all([
-                    fetch(`${endpoints.metrics}?range=${rangeKey}`, { headers }),
-                    fetch(`${endpoints.metricsCharts}?range=${rangeKey}`, { headers })
+                    fetch(`${endpoints.metrics}?range=${rangeKey}`),
+                    fetch(`${endpoints.metricsCharts}?range=${rangeKey}`)
                 ])
                 const kpi = kpiRes.ok ? await kpiRes.json() : null
                 const charts = chartRes.ok ? await chartRes.json() : null

@@ -335,10 +335,7 @@ export async function fetchAIInsights(options = {}) {
         const {
             webhookUrl = '/api/ai-insights',
             method = 'POST',
-            headers = {
-                'Content-Type': 'application/json',
-                'x-internal-api-key': import.meta.env.VITE_INTERNAL_API_KEY
-            },
+            headers = { 'Content-Type': 'application/json' },
             payload = {}
         } = options;
 
@@ -386,28 +383,24 @@ export async function fetchAIInsights(options = {}) {
  */
 export async function sendChatMessage(options = {}) {
     try {
-        let webhookUrl = import.meta.env.VITE_CHAT_WEBHOOK_URL;
+        const {
+            webhookUrl = 'https://n8n-fastest.protonaiagents.com/webhook/signal/chat',
+            method = 'POST',
+            headers = { 'Content-Type': 'application/json' },
+            payload = {}
+        } = options;
 
-        if (!webhookUrl) {
-            // Secure fallback to local proxy, abandoning hardcoded n8n domain
-            webhookUrl = '/api/chat';
-        }
-
-        // Use strict payload fields to maintain N8N contract
         const requestBody = {
-            session_id: options.payload?.session_id,
-            message: options.payload?.message,
-            top_k: options.payload?.top_k ?? 8
+            session_id: payload.session_id,
+            message: payload.message,
+            top_k: payload.top_k ?? 8
         };
 
-        console.log("Chat API Adapter: Sending Message", { session_id: requestBody.session_id, top_k: requestBody.top_k, message: requestBody.message ? (requestBody.message.substring(0, 50) + '...') : 'No message' });
+        console.log("Chat API Adapter: Sending Message", { session_id: requestBody.session_id, top_k: requestBody.top_k, message: requestBody.message.substring(0, 50) + '...' });
 
         const response = await fetch(webhookUrl, {
-            method: 'POST', // Always POST for chat
-            headers: {
-                'Content-Type': 'application/json',
-                'x-internal-api-key': import.meta.env.VITE_INTERNAL_API_KEY
-            },
+            method,
+            headers,
             body: JSON.stringify(requestBody)
         });
 
