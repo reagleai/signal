@@ -61,10 +61,9 @@ export default function DateRangePicker({ value, onChange }) {
                                 aria-disabled="true"
                                 title={`${p.label} disabled`}
                                 onClick={(e) => e.preventDefault()}
-                                className="group px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-medium rounded-md text-[#9CA3A3] cursor-not-allowed transition-all min-h-[32px] flex items-center justify-center relative min-w-[38px] sm:min-w-[44px]"
+                                className="px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-medium rounded-md text-[#9CA3A3] cursor-not-allowed transition-all min-h-[32px] flex items-center justify-center min-w-[38px] sm:min-w-[44px]"
                             >
-                                <span className="hidden group-hover:flex items-center justify-center absolute inset-0 text-[10px]">🚫</span>
-                                <span className="group-hover:hidden">{p.label}</span>
+                                <span>{p.label}</span>
                             </button>
                         );
                     }
@@ -91,10 +90,9 @@ export default function DateRangePicker({ value, onChange }) {
                     aria-disabled="true"
                     title="Custom range disabled"
                     onClick={(e) => e.preventDefault()}
-                    className="group flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border rounded-lg bg-[#F7F8FA] text-[11px] sm:text-[12px] border-[#E8EAED] text-[#9CA3A3] cursor-not-allowed transition-colors min-h-[32px]"
+                    className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border rounded-lg bg-[#F7F8FA] text-[11px] sm:text-[12px] border-[#E8EAED] text-[#9CA3A3] cursor-not-allowed transition-colors min-h-[32px]"
                 >
-                    <span className="hidden group-hover:flex items-center justify-center w-[13px] h-[13px] text-[10px]">🚫</span>
-                    <Calendar size={13} className="group-hover:hidden" />
+                    <Calendar size={13} />
                     <span className="hidden sm:inline">Custom range</span>
                     <span className="sm:hidden">Custom</span>
                 </button>
