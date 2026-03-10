@@ -32,6 +32,7 @@ export default function AIInsights() {
     } = useApp()
     const [expandedId, setExpandedId] = useState(null)
     const [shareOpen, setShareOpen] = useState(false)
+    const [isIngestOn, setIsIngestOn] = useState(false)
 
     const { status, error, lastKnownData } = state.aiRunState;
     const isLoading = status === 'running';
@@ -39,7 +40,7 @@ export default function AIInsights() {
     const hasData = !!lastKnownData;
 
     const handleAnalyze = async () => {
-        await startAiAnalysis(state.dateRange.preset);
+        await startAiAnalysis(state.dateRange.preset, isIngestOn);
     }
 
     const masterProblems = lastKnownData?.masterProblems || []
@@ -119,14 +120,31 @@ export default function AIInsights() {
                             <Calendar size={14} className="text-[#FF9900]" />
                             <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel || 'Unknown'} data</span>
                         </div>
-                        <button
-                            onClick={handleAnalyze}
-                            disabled={isLoading}
-                            className={`bg-[#232F3E] text-white px-4 py-2 rounded-lg text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#374151]'}`}
-                        >
-                            <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-                            {isLoading ? 'Analyzing...' : isRecovering ? 'Restart Analysis' : 'Analyze Signals'}
-                        </button>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                            <div className="flex items-center gap-2" title="Turn off to reuse existing indexed data">
+                                <label className="text-[12px] font-medium text-[#565959] cursor-pointer" htmlFor="ingest-toggle">
+                                    Refresh data before analysis
+                                </label>
+                                <button
+                                    id="ingest-toggle"
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={isIngestOn}
+                                    onClick={() => setIsIngestOn(!isIngestOn)}
+                                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isIngestOn ? 'bg-[#FF9900]' : 'bg-[#E8EAED]'}`}
+                                >
+                                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isIngestOn ? 'translate-x-4' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+                            <button
+                                onClick={handleAnalyze}
+                                disabled={isLoading}
+                                className={`bg-[#232F3E] text-white px-4 py-2 rounded-lg text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#374151]'}`}
+                            >
+                                <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+                                {isLoading ? 'Analyzing...' : isRecovering ? 'Restart Analysis' : 'Analyze Signals'}
+                            </button>
+                        </div>
                     </div>
 
                     {/* ERROR BANNER */}

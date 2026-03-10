@@ -333,7 +333,7 @@ export async function fetchAIInsights(options = {}) {
         }
 
         const requestBody = {
-            ingest: payload.ingest ?? true,
+            ingest: payload.ingest ?? false,
             time_window: payload.time_window ?? "7d",
             max_insights: payload.max_insights ?? 5,
             min_confidence: payload.min_confidence ?? 0.6,

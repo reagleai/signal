@@ -19,7 +19,7 @@ function renderMessageWithCitations(text) {
     return parts.map((part, i) => {
         const match = part.match(/^\[(\d+)\]$/)
         if (match) {
-            return <CitationBadge key={i} number={parseInt(match[1])} />
+            return null // Hidden for V1: <CitationBadge key={i} number={parseInt(match[1])} />
         }
         return <span key={i}>{part}</span>
     })
@@ -104,6 +104,7 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
                                 <div className="bg-[#F7F8FA] border border-[#E8EAED] rounded-xl rounded-tl-sm px-4 py-3 text-[13px] text-[#0F1111] leading-relaxed max-w-[95%] sm:max-w-[90%]">
                                     {renderMessageWithCitations(msg.text)}
                                 </div>
+                                {/* Citations hidden for V1 
                                 {msg.citations && (
                                     <div className="flex items-center gap-1 mt-1 flex-wrap">
                                         <span className="text-[11px] text-[#9CA3A3] mr-2">Sources:</span>
@@ -112,6 +113,7 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
                                         ))}
                                     </div>
                                 )}
+                                */}
                             </div>
                         )
                     ))}

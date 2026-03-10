@@ -139,7 +139,7 @@ export function AppProvider({ children }) {
         setActiveCitations: (ids) => dispatch({ type: 'SET_ACTIVE_CITATIONS', payload: ids }),
         setLastSyncInfo: (info) => dispatch({ type: 'SET_LAST_SYNC_INFO', payload: info }),
         setAiRunState: (runState) => dispatch({ type: 'SET_AI_RUN_STATE', payload: runState }),
-        startAiAnalysis: async (timeWindow) => {
+        startAiAnalysis: async (timeWindow, ingest = false) => {
             // Guard against multiple clicks
             if (state.aiRunState.status === 'running') return;
 
@@ -158,7 +158,7 @@ export function AppProvider({ children }) {
                 // Keep the global context alive while fetching
                 const result = await fetchAIInsights({
                     webhookUrl: '/api/ai-insights',
-                    payload: { time_window: timeWindow || "7d", request_id: jobId }
+                    payload: { time_window: timeWindow || "7d", request_id: jobId, ingest }
                 });
                 dispatch({
                     type: 'SET_AI_RUN_STATE',

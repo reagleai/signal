@@ -42,8 +42,6 @@ Return reason codes: ${item.reasonCodes.join(', ')}
 
 PM Reasoning: ${item.pmReasoning || '[No reasoning added yet]'}
 
-Supporting Evidence: Citations ${item.citationIds.join(', ')}
-
 ─────────────────────────────────`).join('\n\n')}`
 
     const handleCopy = () => {
