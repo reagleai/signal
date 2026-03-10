@@ -1,5 +1,15 @@
 export default async function handler(req, res) {
-    const baseUrl = process.env.N8N_BASE_URL || process.env.VITE_N8N_BASE_URL || 'https://n8n-fastest.protonaiagents.com/webhook';
+    // Enforce internal API key to prevent public abuse
+    const providedKey = req.headers['x-internal-api-key'];
+    if (!providedKey || providedKey !== process.env.VITE_INTERNAL_API_KEY) {
+        return res.status(401).json({ error: 'Unauthorized: Missing or invalid internal API key.' });
+    }
+
+    const baseUrl = process.env.N8N_BASE_URL || process.env.VITE_N8N_BASE_URL;
+    if (!baseUrl) {
+        return res.status(500).json({ error: 'Server misconfiguration: Missing N8N_BASE_URL.' });
+    }
+
     const url = new URL(`${baseUrl}/signal-metrics-charts`);
 
     // Pass query strings safely

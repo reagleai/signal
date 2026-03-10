@@ -117,7 +117,10 @@ export default function DataStatus() {
         try {
             const res = await fetch(endpoints.dataSources, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-internal-api-key': import.meta.env.VITE_INTERNAL_API_KEY
+                },
                 body: '{}'
             })
             if (!res.ok) throw new Error(`HTTP ${res.status}`)

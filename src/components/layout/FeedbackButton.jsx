@@ -69,7 +69,10 @@ export default function FeedbackButton() {
 
             const res = await fetch('/api/feedback', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-internal-api-key': import.meta.env.VITE_INTERNAL_API_KEY
+                },
                 body: JSON.stringify({ name, email, category: selectedCategory, description, page })
             })
 

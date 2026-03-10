@@ -4,22 +4,26 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const n8nBase = env.N8N_BASE_URL || 'https://n8n-fastest.protonaiagents.com/webhook';
+  const n8nBase = env.N8N_BASE_URL || env.VITE_N8N_BASE_URL;
 
-  let targetDomain = 'https://n8n-fastest.protonaiagents.com';
-  let basePath = '/webhook';
-  try {
-    const u = new URL(n8nBase);
-    targetDomain = u.origin;
-    basePath = u.pathname;
-    if (basePath === '/') basePath = '';
-  } catch (e) { }
+  let targetDomain = '';
+  let basePath = '';
+  if (n8nBase) {
+    try {
+      const u = new URL(n8nBase);
+      targetDomain = u.origin;
+      basePath = u.pathname;
+      if (basePath === '/') basePath = '';
+    } catch (e) {
+      console.warn("Invalid N8N_BASE_URL configured in environment.", e);
+    }
+  }
 
   return {
     plugins: [react()],
     build: { sourcemap: false },
     server: {
-      proxy: {
+      proxy: targetDomain ? {
         '/api/ai-insights': {
           target: targetDomain,
           changeOrigin: true,
@@ -51,8 +55,14 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: () => `/webhook/feedback-received`
+        },
+        '/api/chat': {
+          target: targetDomain,
+          changeOrigin: true,
+          secure: false,
+          rewrite: () => `${basePath}/signal/chat`
         }
-      }
+      } : {}
     }
   }
 })
