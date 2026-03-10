@@ -119,7 +119,7 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
                     ref={scrollContainerRef} 
                     className={`flex-1 overflow-y-auto flex flex-col gap-4 mb-4 pr-2 ${
                         scope === 'insights' 
-                            ? 'min-h-[350px] max-h-[550px] sm:min-h-[400px] sm:max-h-[600px]' 
+                            ? 'min-h-[450px] max-h-[650px] sm:min-h-[500px] sm:max-h-[700px]' 
                             : 'h-[250px] sm:h-[300px]'
                     }`}
                     role="log" aria-label="Chat messages" aria-live="polite"
