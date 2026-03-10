@@ -69,21 +69,15 @@ export default function DateRangePicker({ value, onChange }) {
             {/* Custom date button */}
             <div className="relative" ref={panelRef}>
                 <button
-                    onClick={() => setShowCustom(!showCustom)}
-                    aria-expanded={showCustom}
-                    aria-haspopup="dialog"
-                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border rounded-lg bg-white text-[11px] sm:text-[12px] cursor-pointer transition-colors min-h-[32px] ${value.preset === 'custom'
-                        ? 'border-[#FF9900] text-[#0F1111] font-medium'
-                        : 'border-[#E8EAED] text-[#565959] hover:border-[#FF9900] hover:text-[#0F1111]'
-                        }`}
+                    type="button"
+                    aria-disabled="true"
+                    title="Custom range disabled"
+                    onClick={(e) => e.preventDefault()}
+                    className="group flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 border rounded-lg bg-[#F7F8FA] text-[11px] sm:text-[12px] border-[#E8EAED] text-[#9CA3A3] cursor-not-allowed transition-colors min-h-[32px]"
                 >
-                    <Calendar size={13} />
-                    <span className="hidden sm:inline">
-                        {value.preset === 'custom' && value.startDate && value.endDate
-                            ? `${formatDate(value.startDate)} – ${formatDate(value.endDate)}`
-                            : 'Custom range'
-                        }
-                    </span>
+                    <span className="hidden group-hover:flex items-center justify-center w-[13px] h-[13px] text-[10px]">🚫</span>
+                    <Calendar size={13} className="group-hover:hidden" />
+                    <span className="hidden sm:inline">Custom range</span>
                     <span className="sm:hidden">Custom</span>
                 </button>
 

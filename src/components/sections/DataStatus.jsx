@@ -369,8 +369,7 @@ export default function DataStatus() {
                             : summary.recordsProcessed} return events overnight — so you don't have to.
                     </div>
                     <div className="text-[12px] sm:text-[13px] text-[#565959] leading-relaxed">
-                        All {summary.ragIndexed} knowledge bases are indexed and ready. Your usual process — pulling from the
-                        DW, cross-referencing Tableau, downloading tickets — is already done.
+                        All {summary.ragIndexed} knowledge bases are indexed and ready. Signal is analyzing the currently connected source data and indexed knowledge layers for this workspace.
                     </div>
                     <div className="text-[11px] sm:text-[12px] font-semibold text-[#B7791F] mt-2">
                         This replaces approximately 2–3 hours of manual data extraction every week.

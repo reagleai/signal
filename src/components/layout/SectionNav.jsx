@@ -63,10 +63,14 @@ export default function SectionNav() {
 
                     {/* Export button */}
                     <button
-                        className="flex items-center gap-1.5 border border-[#E8EAED] rounded-lg px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] text-[#565959] bg-white hover:border-[#FF9900] hover:text-[#0F1111] transition-colors min-h-[36px] min-w-[36px] justify-center"
-                        aria-label="Export data"
+                        type="button"
+                        className="group flex items-center gap-1.5 border border-[#E8EAED] rounded-lg px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] text-[#9CA3A3] bg-[#F7F8FA] cursor-not-allowed transition-colors min-h-[36px] min-w-[36px] justify-center"
+                        aria-disabled="true"
+                        title="Export disabled"
+                        onClick={(e) => e.preventDefault()}
                     >
-                        <Download size={13} />
+                        <span className="hidden group-hover:flex items-center justify-center w-[13px] h-[13px] text-[10px]">🚫</span>
+                        <Download size={13} className="group-hover:hidden" />
                         <span className="hidden sm:inline">Export</span>
                     </button>
 
