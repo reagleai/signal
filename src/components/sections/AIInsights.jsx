@@ -95,7 +95,7 @@ export default function AIInsights() {
 
 
 
-    const summary = lastKnownData?.summary || state.lastSyncInfo || {
+    const globalSummary = state.lastSyncInfo || {
         activeSources: 5,
         ragIndexed: 5,
         recordsProcessed: '1,705'
@@ -104,8 +104,8 @@ export default function AIInsights() {
     // Explicitly derive active sources and knowledge bases from current result payload
     const uniqueSources = new Set();
     masterProblems.forEach(p => p.sources?.forEach(s => uniqueSources.add(s)));
-    const activeSourceCount = summary.activeSources || 5;
-    const activeRagCount = summary.ragIndexed || 5;
+    const activeSourceCount = globalSummary.activeSources || 5;
+    const activeRagCount = globalSummary.ragIndexed || 5;
 
     const confColor = (v) => v >= 85 ? '#067D62' : v >= 70 ? '#B7791F' : '#C0392B'
 
