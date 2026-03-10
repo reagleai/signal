@@ -377,3 +377,42 @@ export async function fetchAIInsights(options = {}) {
         throw error;
     }
 }
+
+/**
+ * Sends a chat message to the n8n Master PM Node workflow
+ */
+export async function sendChatMessage(options = {}) {
+    try {
+        const {
+            webhookUrl = 'https://n8n-fastest.protonaiagents.com/webhook/signal/chat',
+            method = 'POST',
+            headers = { 'Content-Type': 'application/json' },
+            payload = {}
+        } = options;
+
+        const requestBody = {
+            session_id: payload.session_id,
+            message: payload.message,
+            top_k: payload.top_k ?? 8
+        };
+
+        console.log("Chat API Adapter: Sending Message", { session_id: requestBody.session_id, top_k: requestBody.top_k, message: requestBody.message.substring(0, 50) + '...' });
+
+        const response = await fetch(webhookUrl, {
+            method,
+            headers,
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Chat Webhook responded with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data; // { session_id, query, reply, issues_found, lanes_used, history, meta }
+
+    } catch (error) {
+        console.error("Chat API Adapter: Send Failed", error);
+        throw error;
+    }
+}

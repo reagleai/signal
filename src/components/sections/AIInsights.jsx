@@ -381,22 +381,10 @@ export default function AIInsights() {
                             })}
                         </div>
                     )}
-
-                    {/* ═══ CHATBOT ═══ */}
-                    <div className="mb-8">
-                        <ChatBot
-                            scope="insights"
-                            title="Ask the Master PM Node"
-                            subtitle="Scoped to the 5 problems above. All answers include reason code context."
-                            placeholder='e.g. "Why is the checkout crash ranked #1?" or "Which return code is Problem 2 driving?"'
-                            suggestedQueries={chatQuestions}
-                        />
-                    </div>
                 </div>
 
                 {/* ═══ RIGHT COLUMN (sticky) — stacks below on mobile ═══ */}
-                <div className="flex-[2] min-w-0 w-full xl:w-auto xl:sticky xl:top-4">
-
+                <div className="flex-[2] min-w-0 w-full xl:w-auto flex flex-col gap-6 xl:sticky xl:top-4">
 
                     {/* ── CARD 2: INTELLIGENT NOTEPAD ── */}
                     <div className="bg-white border border-[#E8EAED] rounded-xl shadow-sm flex flex-col">
@@ -479,6 +467,17 @@ export default function AIInsights() {
                                 </button>
                             </div>
                         )}
+                    </div>
+
+                    {/* ═══ CHATBOT ═══ */}
+                    <div className="mb-8 xl:mb-0">
+                        <ChatBot
+                            scope="insights"
+                            title="Ask the Master PM Node"
+                            subtitle="Scoped to the 5 problems above. All answers include reason code context."
+                            placeholder='e.g. "Why is the checkout crash ranked #1?" or "Which return code is Problem 2 driving?"'
+                            suggestedQueries={chatQuestions}
+                        />
                     </div>
                 </div>
             </div>
