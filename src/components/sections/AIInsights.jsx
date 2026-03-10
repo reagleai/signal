@@ -91,6 +91,12 @@ export default function AIInsights() {
         recordsProcessed: '1,705'
     }
 
+    // Explicitly derive active sources and knowledge bases from current result payload
+    const uniqueSources = new Set();
+    masterProblems.forEach(p => p.sources?.forEach(s => uniqueSources.add(s)));
+    const activeSourceCount = hasData && uniqueSources.size > 0 ? uniqueSources.size : (summary.activeSources || 5);
+    const activeRagCount = hasData && uniqueSources.size > 0 ? uniqueSources.size : (summary.ragIndexed || 5);
+
     const confColor = (v) => v >= 85 ? '#067D62' : v >= 70 ? '#B7791F' : '#C0392B'
 
     return (
@@ -103,7 +109,7 @@ export default function AIInsights() {
                         <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL — SECTION 3</div>
                         <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">AI Insights</h1>
                         <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[560px]">
-                            {hasData ? `${masterProblems.length} high potential problem${masterProblems.length !== 1 ? 's' : ''}` : 'High potential problems'} identified and synthesized by Signal's Master PM Node from {summary.activeSources || 5} data sources and {summary.ragIndexed || 5} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
+                            {hasData ? `${masterProblems.length} high potential problem${masterProblems.length !== 1 ? 's' : ''}` : 'High potential problems'} identified and synthesized by Signal's Master PM Node from {activeSourceCount} data sources and {activeRagCount} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
                         </p>
                     </div>
 
@@ -226,7 +232,7 @@ export default function AIInsights() {
                                                             </div>
                                                             <span className="text-[12px] font-semibold text-[#0F1111]">{problem.confidence}%</span>
                                                         </div>
-                                                        <div className="w-px h-4 bg-[#E8EAED] hidden sm:block" />
+                                                        {/* Source metric hidden for V1 
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[#9CA3A3]">Sources</span>
                                                             <div className="flex gap-0.5">
@@ -235,6 +241,7 @@ export default function AIInsights() {
                                                                 ))}
                                                             </div>
                                                         </div>
+                                                        */}
                                                         <div className="w-px h-4 bg-[#E8EAED] hidden sm:block" />
                                                         <div className="flex items-center gap-1.5">
                                                             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[#9CA3A3]">Grounded</span>
@@ -246,17 +253,19 @@ export default function AIInsights() {
                                                         </div>
                                                     </div>
 
-                                                    {/* ROW 3 — Source chips + citations */}
-                                                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-2">
-                                                        {problem.sources.map(s => (
-                                                            <span key={s} className="bg-[#F7F8FA] border border-[#E8EAED] rounded-full px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] text-[#565959] font-medium">{s}</span>
-                                                        ))}
-                                                        <div className="flex gap-0.5 sm:ml-auto">
-                                                            {problem.citationIds.map(id => (
-                                                                <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]); setSelectedProblemId(problem.id) }} />
+                                                    {/* ROW 3 — Source chips + citations (Hidden for V1) */}
+                                                    {false && (
+                                                        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-2">
+                                                            {problem.sources.map(s => (
+                                                                <span key={s} className="bg-[#F7F8FA] border border-[#E8EAED] rounded-full px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] text-[#565959] font-medium">{s}</span>
                                                             ))}
+                                                            <div className="flex gap-0.5 sm:ml-auto">
+                                                                {problem.citationIds.map(id => (
+                                                                    <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]); setSelectedProblemId(problem.id) }} />
+                                                                ))}
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    )}
 
                                                     {/* ROW 4 — Reason code tags */}
                                                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mt-1">
@@ -279,33 +288,37 @@ export default function AIInsights() {
                                         {/* ── EXPANDED SECTION ── */}
                                         <div style={{ maxHeight: isExpanded ? '1200px' : '0px', opacity: isExpanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 300ms ease, opacity 200ms ease' }}>
                                             <div className="border-t border-[#F0F0F0] pt-4 sm:pt-5 pb-4 sm:pb-5 px-4 sm:px-5">
-                                                {/* What each source found */}
-                                                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#9CA3A3] mb-4">What each source found</h3>
-                                                {Object.entries(problem.nodeProblems).map(([source, items]) => (
-                                                    <div key={source} className="mb-4 last:mb-0">
-                                                        <div className="flex items-center gap-2 mb-2">
-                                                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: sourceColors[source] || '#9CA3A3' }} />
-                                                            <span className="text-[12px] font-semibold text-[#0F1111]">{source}</span>
-                                                        </div>
-                                                        {items.map((item, idx) => (
-                                                            <div key={idx} className="bg-[#F7F8FA] rounded-lg px-3 sm:px-4 py-3 mb-1.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 hover:bg-[#FFF8EE] transition-colors">
-                                                                <span className="text-[12px] sm:text-[13px] text-[#0F1111] flex-1">{item.title}</span>
-                                                                <div className="flex items-center gap-2">
-                                                                    {item.count !== null && (
-                                                                        <span className="bg-[#FF9900]/10 text-[#B7791F] rounded-full px-2 py-0.5 text-[11px] font-semibold">{item.count} events</span>
-                                                                    )}
-                                                                    {item.citationIds.map(id => (
-                                                                        <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]) }} />
-                                                                    ))}
+                                                {/* What each source found (Hidden for V1) */}
+                                                {false && (
+                                                    <>
+                                                        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#9CA3A3] mb-4">What each source found</h3>
+                                                        {Object.entries(problem.nodeProblems).map(([source, items]) => (
+                                                            <div key={source} className="mb-4 last:mb-0">
+                                                                <div className="flex items-center gap-2 mb-2">
+                                                                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: sourceColors[source] || '#9CA3A3' }} />
+                                                                    <span className="text-[12px] font-semibold text-[#0F1111]">{source}</span>
                                                                 </div>
+                                                                {items.map((item, idx) => (
+                                                                    <div key={idx} className="bg-[#F7F8FA] rounded-lg px-3 sm:px-4 py-3 mb-1.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 hover:bg-[#FFF8EE] transition-colors">
+                                                                        <span className="text-[12px] sm:text-[13px] text-[#0F1111] flex-1">{item.title}</span>
+                                                                        <div className="flex items-center gap-2">
+                                                                            {item.count !== null && (
+                                                                                <span className="bg-[#FF9900]/10 text-[#B7791F] rounded-full px-2 py-0.5 text-[11px] font-semibold">{item.count} events</span>
+                                                                            )}
+                                                                            {item.citationIds.map(id => (
+                                                                                <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]) }} />
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
                                                             </div>
                                                         ))}
-                                                    </div>
-                                                ))}
+                                                    </>
+                                                )}
 
                                                 {/* Sub-reason drivers */}
                                                 {problem.subReasonDrivers.length > 0 && (
-                                                    <div className="mt-4 pt-4 border-t border-[#F0F0F0]">
+                                                    <div>
                                                         <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#9CA3A3] mb-3">Sub-reason impact</h3>
                                                         {problem.subReasonDrivers.map((driver, idx) => (
                                                             <div key={idx} className="bg-[#FFF8EE] border border-[#FF9900]/20 rounded-lg px-3 sm:px-4 py-3 mb-2">
@@ -347,7 +360,7 @@ export default function AIInsights() {
                         <ChatBot
                             scope="insights"
                             title="Ask the Master PM Node"
-                            subtitle="Scoped to the 5 problems above. All answers include citations and reason code context."
+                            subtitle="Scoped to the 5 problems above. All answers include reason code context."
                             placeholder='e.g. "Why is the checkout crash ranked #1?" or "Which return code is Problem 2 driving?"'
                             suggestedQueries={[
                                 "Why is the checkout crash ranked #1?",
@@ -416,12 +429,14 @@ export default function AIInsights() {
                                                 onClick={(e) => e.stopPropagation()}
                                             />
                                         </div>
+                                        {/* Evidence hidden for V1 
                                         <div className="mt-2 flex items-center gap-1 flex-wrap">
                                             <span className="text-[10px] text-[#9CA3A3] mr-1">Evidence:</span>
                                             {item.citationIds.map(id => (
                                                 <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]) }} />
                                             ))}
                                         </div>
+                                        */}
                                     </div>
                                 ))
                             )}
