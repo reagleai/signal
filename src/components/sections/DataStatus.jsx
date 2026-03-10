@@ -102,8 +102,8 @@ export default function DataStatus() {
 
     const summary = state.lastSyncInfo || {
         activeSources: 5,
-        ragIndexed: 14,
-        recordsProcessed: '2.1M',
+        ragIndexed: 5,
+        recordsProcessed: '1,705',
         lastGlobalSyncTime: '—',
         lastGlobalSyncTimeRaw: null
     }

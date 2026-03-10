@@ -87,8 +87,8 @@ export default function AIInsights() {
 
     const summary = lastKnownData?.summary || state.lastSyncInfo || {
         activeSources: 5,
-        ragIndexed: 14,
-        recordsProcessed: '47,832'
+        ragIndexed: 5,
+        recordsProcessed: '1,705'
     }
 
     const confColor = (v) => v >= 85 ? '#067D62' : v >= 70 ? '#B7791F' : '#C0392B'
@@ -103,7 +103,7 @@ export default function AIInsights() {
                         <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL — SECTION 3</div>
                         <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">AI Insights</h1>
                         <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[560px]">
-                            5 problems synthesized by Signal's Master PM Node from {summary.recordsProcessed} return events and {summary.ragIndexed} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
+                            {hasData ? `${masterProblems.length} high potential problem${masterProblems.length !== 1 ? 's' : ''}` : 'High potential problems'} identified and synthesized by Signal's Master PM Node from {summary.activeSources || 5} data sources and {summary.ragIndexed || 5} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
                         </p>
                     </div>
 
@@ -111,7 +111,7 @@ export default function AIInsights() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 mb-6">
                         <div className="flex items-center gap-2">
                             <Calendar size={14} className="text-[#FF9900]" />
-                            <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel} data · {summary.recordsProcessed} events</span>
+                            <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel || 'Unknown'} data</span>
                         </div>
                         <button
                             onClick={handleAnalyze}
