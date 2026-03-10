@@ -51,19 +51,37 @@ export default function DateRangePicker({ value, onChange }) {
         <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Preset buttons */}
             <div className="bg-[#F7F8FA] border border-[#E8EAED] rounded-lg p-0.5 flex" role="group" aria-label="Date range presets">
-                {presets.map(p => (
-                    <button
-                        key={p.key}
-                        onClick={() => onChange({ preset: p.key, startDate: null, endDate: null })}
-                        aria-pressed={value.preset === p.key}
-                        className={`px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-medium rounded-md cursor-pointer transition-all min-h-[32px] ${value.preset === p.key
-                            ? 'bg-[#FF9900] text-white font-semibold shadow-sm'
-                            : 'text-[#565959] hover:text-[#0F1111]'
-                            }`}
-                    >
-                        {p.label}
-                    </button>
-                ))}
+                {presets.map(p => {
+                    const isDisabled = p.key === '30d' || p.key === '90d';
+                    if (isDisabled) {
+                        return (
+                            <button
+                                key={p.key}
+                                type="button"
+                                aria-disabled="true"
+                                title={`${p.label} disabled`}
+                                onClick={(e) => e.preventDefault()}
+                                className="group px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-medium rounded-md text-[#9CA3A3] cursor-not-allowed transition-all min-h-[32px] flex items-center justify-center relative min-w-[38px] sm:min-w-[44px]"
+                            >
+                                <span className="hidden group-hover:flex items-center justify-center absolute inset-0 text-[10px]">🚫</span>
+                                <span className="group-hover:hidden">{p.label}</span>
+                            </button>
+                        );
+                    }
+                    return (
+                        <button
+                            key={p.key}
+                            onClick={() => onChange({ preset: p.key, startDate: null, endDate: null })}
+                            aria-pressed={value.preset === p.key}
+                            className={`px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-[12px] font-medium rounded-md cursor-pointer transition-all min-h-[32px] ${value.preset === p.key
+                                ? 'bg-[#FF9900] text-white font-semibold shadow-sm'
+                                : 'text-[#565959] hover:text-[#0F1111]'
+                                }`}
+                        >
+                            {p.label}
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Custom date button */}
