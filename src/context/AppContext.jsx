@@ -73,7 +73,11 @@ export function AppProvider({ children }) {
         try {
             const savedPrefs = localStorage.getItem('signal-preferences')
             if (savedPrefs) {
-                hydrated.preferences = { ...hydrated.preferences, ...JSON.parse(savedPrefs) }
+                const parsedPrefs = JSON.parse(savedPrefs);
+                hydrated.preferences = { ...hydrated.preferences, ...parsedPrefs }
+                if (parsedPrefs.lastVisited) {
+                    hydrated.activeSection = parsedPrefs.lastVisited;
+                }
             }
             const savedSync = localStorage.getItem('signal-sync-cache')
             if (savedSync) {

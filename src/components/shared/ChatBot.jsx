@@ -115,7 +115,15 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
 
             {/* Messages thread */}
             {expanded && (
-                <div ref={scrollContainerRef} className="flex-1 overflow-y-auto flex flex-col gap-4 mb-4 h-[250px] sm:h-[300px] pr-2" role="log" aria-label="Chat messages" aria-live="polite">
+                <div 
+                    ref={scrollContainerRef} 
+                    className={`flex-1 overflow-y-auto flex flex-col gap-4 mb-4 pr-2 ${
+                        scope === 'insights' 
+                            ? 'min-h-[350px] max-h-[550px] sm:min-h-[400px] sm:max-h-[600px]' 
+                            : 'h-[250px] sm:h-[300px]'
+                    }`}
+                    role="log" aria-label="Chat messages" aria-live="polite"
+                >
                     {messages.map((msg, i) => {
                         if (msg.role === 'user') {
                             return (
