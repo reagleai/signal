@@ -46,6 +46,15 @@ export default function AIInsights() {
     const masterProblems = lastKnownData?.masterProblems || []
     const citationLibrary = lastKnownData?.citationLibrary || []
 
+    const chatQuestions = lastKnownData?.chatQuestions?.length > 0
+        ? lastKnownData.chatQuestions
+        : [
+            "Why is the checkout crash ranked #1?",
+            "Which return reason code is Problem 2 driving?",
+            "Has the 'Defective' sub-reason spike been explained?",
+            "Which problem has the most user impact?"
+        ];
+
     const rangeLabel =
         state.dateRange.preset === '7d' ? 'Past 7 Days' :
             state.dateRange.preset === '30d' ? 'Past 30 Days' :
@@ -380,12 +389,7 @@ export default function AIInsights() {
                             title="Ask the Master PM Node"
                             subtitle="Scoped to the 5 problems above. All answers include reason code context."
                             placeholder='e.g. "Why is the checkout crash ranked #1?" or "Which return code is Problem 2 driving?"'
-                            suggestedQueries={[
-                                "Why is the checkout crash ranked #1?",
-                                "Which return reason code is Problem 2 driving?",
-                                "Has the 'Defective' sub-reason spike been explained?",
-                                "Which problem has the most user impact?"
-                            ]}
+                            suggestedQueries={chatQuestions}
                         />
                     </div>
                 </div>

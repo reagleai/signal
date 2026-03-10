@@ -221,7 +221,7 @@ export function mapSignalAiInsightsResponse(backendData) {
     if (!backendData || !backendData.insights) {
         // Provide a safe fallback if the payload is malformed
         console.warn("AI Insights Adapter: Missing or malformed 'insights' array in payload.", backendData);
-        return { masterProblems: [], citationLibrary: [], summary: { recordsProcessed: 0, ragIndexed: 0 } };
+        return { masterProblems: [], citationLibrary: [], chatQuestions: null, summary: { recordsProcessed: 0, ragIndexed: 0 } };
     }
 
     const citationLibrary = [];
@@ -301,9 +301,24 @@ export function mapSignalAiInsightsResponse(backendData) {
         };
     });
 
+    let chatQuestions = null;
+
+    if (backendData.static_questions &&
+        (backendData.static_questions.question_1 || backendData.static_questions.question_2 || backendData.static_questions.question_3 || backendData.static_questions.question_4)) {
+        chatQuestions = [
+            backendData.static_questions.question_1,
+            backendData.static_questions.question_2,
+            backendData.static_questions.question_3,
+            backendData.static_questions.question_4
+        ].filter(Boolean);
+    } else if (Array.isArray(backendData.follow_up_questions) && backendData.follow_up_questions.length > 0) {
+        chatQuestions = backendData.follow_up_questions.slice(0, 4).filter(Boolean);
+    }
+
     return {
         masterProblems,
         citationLibrary,
+        chatQuestions,
         summary: {
             recordsProcessed: backendData.total_events_analyzed || 0,
             ragIndexed: Array.isArray(backendData.signals_used) ? backendData.signals_used.length : 0,
