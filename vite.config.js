@@ -59,6 +59,14 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: () => `/webhook/feedback-received`
+        },
+        '/api/chat': {
+          target: targetDomain,
+          changeOrigin: true,
+          secure: false,
+          rewrite: () => `${basePath}/signal/chat`,
+          timeout: 120000,
+          proxyTimeout: 120000
         }
       }
     }
