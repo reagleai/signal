@@ -95,7 +95,7 @@ export function AppProvider({ children }) {
                 // If we hard rehydrated while "running", the connection was killed. Move to recovering.
                 if (parsedAiRun.status === 'running') {
                     // Timeout logic: if it's older than 20 mins, just fail it or return to idle.
-                    const isStale = (Date.now() - new Date(parsedAiRun.startedAt).getTime()) > 1200000;
+                    const isStale = (Date.now() - new Date(parsedAiRun.startedAt).getTime()) > 2400000;
                     parsedAiRun.status = isStale ? 'failed' : 'recovering';
                     parsedAiRun.error = isStale ? "Run timed out." : "Analysis was interrupted by a page reload. We cannot confirm the active status.";
                 } else if (parsedAiRun.status === 'failed') {
@@ -206,7 +206,7 @@ export function AppProvider({ children }) {
                 // Differentiate error types for the UI
                 let errorMessage;
                 if (err.type === 'timeout') {
-                    errorMessage = 'Analysis timed out after 20 minutes. The backend may still be processing — try again shortly.';
+                    errorMessage = 'Analysis timed out after 40 minutes. The backend may still be processing — try again shortly.';
                 } else if (err.type === 'http') {
                     errorMessage = `Backend returned an error (HTTP ${err.status}). Please try again.`;
                 } else {

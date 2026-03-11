@@ -339,7 +339,7 @@ export async function fetchAIInsights(options = {}) {
         method = 'POST',
         headers = { 'Content-Type': 'application/json' },
         payload = {},
-        timeoutMs = 1200000  // 20 minutes
+        timeoutMs = 2400000  // 40 minutes
     } = options;
 
     const requestBody = {
@@ -381,7 +381,7 @@ export async function fetchAIInsights(options = {}) {
 
         // Tag the error type for the caller to differentiate
         if (error.name === 'AbortError') {
-            const err = new Error('Analysis timed out after 20 minutes. The backend may still be processing.');
+            const err = new Error('Analysis timed out after 40 minutes. The backend may still be processing.');
             err.type = 'timeout';
             throw err;
         }
