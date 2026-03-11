@@ -88,8 +88,8 @@ export function AppProvider({ children }) {
                 const parsedAiRun = JSON.parse(savedAiRun)
                 // If we hard rehydrated while "running", the connection was killed. Move to recovering.
                 if (parsedAiRun.status === 'running') {
-                    // Timeout logic: if it's older than 15 mins, just fail it or return to idle.
-                    const isStale = (Date.now() - new Date(parsedAiRun.startedAt).getTime()) > 900000;
+                    // Timeout logic: if it's older than 10 mins, just fail it or return to idle.
+                    const isStale = (Date.now() - new Date(parsedAiRun.startedAt).getTime()) > 600000;
                     parsedAiRun.status = isStale ? 'failed' : 'recovering';
                     parsedAiRun.error = isStale ? "Run timed out." : "Analysis was interrupted by a page reload. We cannot confirm the active status.";
                 }

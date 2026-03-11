@@ -25,8 +25,8 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: () => `${basePath}/signal/run`,
-          timeout: 900000,
-          proxyTimeout: 900000
+          timeout: 600000,
+          proxyTimeout: 600000
         },
         '/api/data-sources': {
           target: targetDomain,
