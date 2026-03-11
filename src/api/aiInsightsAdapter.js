@@ -334,8 +334,9 @@ export function mapSignalAiInsightsResponse(backendData) {
  * Includes a 20-minute AbortController timeout as the upper guard.
  */
 export async function fetchAIInsights(options = {}) {
+    const defaultUrl = import.meta.env.VITE_N8N_WEBHOOK_RUN_URL || '/api/ai-insights';
     const {
-        webhookUrl = 'https://n8n-fastest.protonaiagents.com/webhook/signal/run',
+        webhookUrl = defaultUrl,
         method = 'POST',
         headers = { 'Content-Type': 'application/json' },
         payload = {},
@@ -350,7 +351,7 @@ export async function fetchAIInsights(options = {}) {
         request_id: payload.request_id ?? `signal-${Date.now()}`
     };
 
-    console.log("AI Insights Adapter: Dispatching Request", requestBody);
+    if (import.meta.env.DEV) console.log("AI Insights Adapter: Dispatching Request", requestBody);
 
     // AbortController with 20-minute timeout guard
     const controller = new AbortController();
@@ -390,7 +391,7 @@ export async function fetchAIInsights(options = {}) {
             error.type = 'network';
         }
 
-        console.error("AI Insights Adapter: Fetch Failed", error);
+        if (import.meta.env.DEV) console.error("AI Insights Adapter: Fetch Failed", error);
         throw error;
     }
 }
@@ -400,8 +401,9 @@ export async function fetchAIInsights(options = {}) {
  */
 export async function sendChatMessage(options = {}) {
     try {
+        const defaultChatUrl = import.meta.env.VITE_N8N_WEBHOOK_CHAT_URL || '/api/chat';
         const {
-            webhookUrl = 'https://n8n-fastest.protonaiagents.com/webhook/signal/chat',
+            webhookUrl = defaultChatUrl,
             method = 'POST',
             headers = { 'Content-Type': 'application/json' },
             payload = {}
@@ -413,7 +415,7 @@ export async function sendChatMessage(options = {}) {
             top_k: payload.top_k ?? 8
         };
 
-        console.log("Chat API Adapter: Sending Message", { session_id: requestBody.session_id, top_k: requestBody.top_k, message: requestBody.message.substring(0, 50) + '...' });
+        if (import.meta.env.DEV) console.log("Chat API Adapter: Sending Message", { session_id: requestBody.session_id, top_k: requestBody.top_k, message: requestBody.message.substring(0, 50) + '...' });
 
         const response = await fetch(webhookUrl, {
             method,
@@ -429,7 +431,7 @@ export async function sendChatMessage(options = {}) {
         return data; // { session_id, query, reply, issues_found, lanes_used, history, meta }
 
     } catch (error) {
-        console.error("Chat API Adapter: Send Failed", error);
+        if (import.meta.env.DEV) console.error("Chat API Adapter: Send Failed", error);
         throw error;
     }
 }

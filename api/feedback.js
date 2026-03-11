@@ -20,8 +20,12 @@ export default async function handler(req, res) {
 
     // Description is optional in V1
 
-    // Retrieve webhook URL from server environment correctly
-    const feedbackWebhookUrl = process.env.N8N_FEEDBACK_WEBHOOK || 'https://n8n-fastest.protonaiagents.com/webhook/feedback-received';
+    // Retrieve webhook URL from server environment
+    const feedbackWebhookUrl = process.env.N8N_FEEDBACK_WEBHOOK;
+    if (!feedbackWebhookUrl) {
+        console.error("Feedback Proxy: N8N_FEEDBACK_WEBHOOK environment variable is not set.");
+        return res.status(500).json({ message: 'Server configuration error.' });
+    }
 
     // Construct exactly payload requested by the user
     const payload = {
@@ -34,8 +38,6 @@ export default async function handler(req, res) {
     }
 
     try {
-        console.log(`[Proxy] Forwarding secure feedback payload to n8n webhook...`);
-
         const fetchRes = await fetch(feedbackWebhookUrl, {
             method: 'POST',
             headers: {

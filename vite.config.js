@@ -4,15 +4,21 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const n8nBase = env.N8N_BASE_URL || 'https://n8n-fastest.protonaiagents.com/webhook';
+  const n8nBase = env.N8N_BASE_URL;
 
-  let targetDomain = 'https://n8n-fastest.protonaiagents.com';
+  if (!n8nBase) {
+    console.warn('\x1b[33m⚠ N8N_BASE_URL not set in .env — API proxy routes will not work in dev mode.\x1b[0m');
+  }
+
+  let targetDomain = n8nBase ? new URL(n8nBase).origin : 'http://localhost:5678';
   let basePath = '/webhook';
   try {
-    const u = new URL(n8nBase);
-    targetDomain = u.origin;
-    basePath = u.pathname;
-    if (basePath === '/') basePath = '';
+    if (n8nBase) {
+      const u = new URL(n8nBase);
+      targetDomain = u.origin;
+      basePath = u.pathname;
+      if (basePath === '/') basePath = '';
+    }
   } catch (e) { }
 
   return {

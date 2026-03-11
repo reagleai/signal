@@ -1,5 +1,9 @@
 export default async function handler(req, res) {
-    const baseUrl = process.env.N8N_BASE_URL || process.env.VITE_N8N_BASE_URL || 'https://n8n-fastest.protonaiagents.com/webhook';
+    const baseUrl = process.env.N8N_BASE_URL;
+    if (!baseUrl) {
+        console.error("Data Sources Proxy: N8N_BASE_URL environment variable is not set.");
+        return res.status(500).json({ error: 'Server configuration error.' });
+    }
     const endpoint = `${baseUrl}/api-data-sources-sync`;
 
     try {
@@ -10,14 +14,13 @@ export default async function handler(req, res) {
         });
 
         if (!fetchRes.ok) {
-            throw new Error(`Upstream failed: ${fetchRes.status}`);
+            throw new Error(`Upstream responded with ${fetchRes.status}`);
         }
 
         const data = await fetchRes.json();
         return res.status(200).json(data);
     } catch (err) {
-        // Safe error logging
         console.error("Data Sources Proxy Error:", err);
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: 'Failed to fetch data sources.' });
     }
 }
