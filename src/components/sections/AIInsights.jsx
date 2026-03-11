@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Calendar, ChevronDown, PenLine, ExternalLink, BookOpen, FileText, Clock, Send, X, AlertCircle, RefreshCw } from 'lucide-react'
+import { Calendar, ChevronDown, PenLine, ExternalLink, BookOpen, FileText, Clock, Send, X, AlertCircle, RefreshCw, CheckCircle } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { reasonCodeColors } from '../../data/mockData'
 import { fetchAIInsights } from '../../api/aiInsightsAdapter'
+import { formatISTFull } from '../../utils/dateFormatters'
 import Badge from '../shared/Badge'
 import CitationBadge from '../shared/CitationBadge'
 import ChatBot from '../shared/ChatBot'
@@ -37,7 +38,7 @@ export default function AIInsights() {
     const { status, error, lastKnownData } = state.aiRunState;
     const isLoading = status === 'running';
     const isRecovering = status === 'recovering';
-    const hasData = !!lastKnownData;
+    const hasData = !!lastKnownData && Array.isArray(lastKnownData.masterProblems);
 
     const handleAnalyze = async () => {
         await startAiAnalysis(state.dateRange.preset, isIngestOn);
@@ -48,12 +49,7 @@ export default function AIInsights() {
 
     const chatQuestions = lastKnownData?.chatQuestions?.length > 0
         ? lastKnownData.chatQuestions
-        : [
-            "Why is the checkout crash ranked #1?",
-            "Which return reason code is Problem 2 driving?",
-            "Has the 'Defective' sub-reason spike been explained?",
-            "Which problem has the most user impact?"
-        ];
+        : [];
 
     const rangeLabel =
         state.dateRange.preset === '7d' ? 'Past 7 Days' :
@@ -127,7 +123,11 @@ export default function AIInsights() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 mb-6">
                         <div className="flex items-center gap-2">
                             <Calendar size={14} className="text-[#FF9900]" />
-                            <span className="text-[12px] sm:text-[13px] text-[#565959]">Insights generated from: {rangeLabel || 'Unknown'} data</span>
+                            <span className="text-[12px] sm:text-[13px] text-[#565959]">
+                                {lastKnownData?.analyzedAt
+                                    ? `Insights generated from analysis run on: ${formatISTFull(lastKnownData.analyzedAt)}`
+                                    : 'No analysis run yet'}
+                            </span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                             <div className="flex items-center gap-2" title="Turn off to reuse existing indexed data">
@@ -211,12 +211,12 @@ export default function AIInsights() {
                             </button>
                         </div>
                     ) : masterProblems.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 bg-white border border-[#E8EAED] rounded-xl shadow-sm text-center px-4">
-                            <div className="bg-[#F7F8FA] w-14 h-14 rounded-full flex items-center justify-center mb-4">
-                                <BookOpen size={24} className="text-[#9CA3A3]" />
+                        <div className="flex flex-col items-center justify-center py-20 bg-[#FFF8EE] border border-[#FF9900]/20 rounded-xl shadow-sm text-center px-4">
+                            <div className="bg-[#FF9900]/10 w-14 h-14 rounded-full flex items-center justify-center mb-4">
+                                <CheckCircle size={24} className="text-[#B7791F]" />
                             </div>
-                            <h3 className="text-[15px] font-semibold text-[#0F1111] mb-2">No problems detected</h3>
-                            <p className="text-[13px] text-[#565959] max-w-[300px]">The AI analysis for the selected time window yielded no major friction points.</p>
+                            <h3 className="text-[15px] font-semibold text-[#0F1111] mb-2">Analysis complete</h3>
+                            <p className="text-[13px] text-[#565959] max-w-[400px]">Signal has processed all available data. No high-priority friction patterns crossed the confidence threshold for this run. Try expanding the time window or refreshing data sources before re-analyzing.</p>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3 mb-8">

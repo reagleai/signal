@@ -3,36 +3,9 @@ import { RefreshCw, CheckCircle, XCircle, Brain, Zap } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
 import { integrations as mockIntegrations } from '../../data/mockData'
 import { endpoints } from '../../config/endpoints'
+import { formatISTTime, formatISTDate, formatISTFull } from '../../utils/dateFormatters'
 import MetricCard from '../shared/MetricCard'
 import Badge from '../shared/Badge'
-
-// ── IST formatting helpers ──────────────────────────────────
-const IST_TZ = 'Asia/Kolkata'
-
-function formatISTTime(isoOrStr) {
-    if (!isoOrStr) return '—'
-    const d = new Date(isoOrStr)
-    if (isNaN(d.getTime())) return String(isoOrStr)  // pass through pre-formatted strings
-    return d.toLocaleTimeString('en-IN', { timeZone: IST_TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })
-}
-
-function formatISTDate(isoOrStr) {
-    if (!isoOrStr) return '—'
-    const d = new Date(isoOrStr)
-    if (isNaN(d.getTime())) return String(isoOrStr)
-    const today = new Date()
-    const istToday = new Date(today.toLocaleString('en-US', { timeZone: IST_TZ }))
-    const istDate = new Date(d.toLocaleString('en-US', { timeZone: IST_TZ }))
-    if (istDate.toDateString() === istToday.toDateString()) return 'Today'
-    return d.toLocaleDateString('en-IN', { timeZone: IST_TZ, day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-function formatISTFull(isoOrStr) {
-    if (!isoOrStr) return '—'
-    const d = new Date(isoOrStr)
-    if (isNaN(d.getTime())) return String(isoOrStr)
-    return d.toLocaleString('en-IN', { timeZone: IST_TZ, day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })
-}
 
 // Visual identity per lane — n8n doesn't return these, so we derive them locally
 const LANE_META = {
@@ -90,7 +63,7 @@ function normalizeMock(item) {
 }
 
 export default function DataStatus() {
-    const { state, setActiveSection, addToast, setLastSyncInfo } = useApp()
+    const { state, setActiveSection, addToast, setLastSyncInfo, setDataSyncState } = useApp()
 
     const [sources, setSources] = useState(() => {
         try {
@@ -108,7 +81,7 @@ export default function DataStatus() {
         lastGlobalSyncTimeRaw: null
     }
     const [loading, setLoading] = useState(false)
-    const [syncing, setSyncing] = useState(false)
+    const syncing = state.dataSyncState.syncing
     const [lastError, setLastError] = useState(null)
 
     async function fetchData() {
@@ -154,13 +127,11 @@ export default function DataStatus() {
 
     const handleResync = async () => {
         if (syncing) return
-        setSyncing(true)
+        setDataSyncState({ syncing: true, syncStartedAt: new Date().toISOString() })
         addToast({ id: Date.now(), type: 'info', message: 'Re-syncing all sources…' })
-        // Keep syncing state active for at least 5 minutes
-        const minDuration = new Promise(resolve => setTimeout(resolve, 300000));
-        await Promise.all([fetchData(), minDuration]);
+        await fetchData()
         addToast({ id: Date.now(), type: 'success', message: 'Sources refreshed.' })
-        setSyncing(false)
+        setDataSyncState({ syncing: false, syncStartedAt: null })
     }
 
     // ── Loading skeleton ──────────────────────────────────────

@@ -21,6 +21,10 @@ const defaultState = {
         error: null,
         lastKnownData: null
     },
+    dataSyncState: {
+        syncing: false,
+        syncStartedAt: null
+    },
     preferences: {
         defaultSection: null,
         lastVisited: null,
@@ -58,6 +62,8 @@ function reducer(state, action) {
             return { ...state, lastSyncInfo: action.payload }
         case 'SET_AI_RUN_STATE':
             return { ...state, aiRunState: { ...state.aiRunState, ...action.payload } }
+        case 'SET_DATA_SYNC_STATE':
+            return { ...state, dataSyncState: { ...state.dataSyncState, ...action.payload } }
         case 'SET_PREFERENCES':
             return { ...state, preferences: { ...state.preferences, ...action.payload } }
         default:
@@ -99,6 +105,19 @@ export function AppProvider({ children }) {
                 }
                 hydrated.aiRunState = parsedAiRun
             }
+            const savedDataSync = localStorage.getItem('signal-data-sync-state')
+            if (savedDataSync) {
+                const parsedSync = JSON.parse(savedDataSync)
+                if (parsedSync.syncing) {
+                    // If syncing was true but over 5 minutes have elapsed, treat as completed
+                    const elapsed = Date.now() - new Date(parsedSync.syncStartedAt).getTime()
+                    if (elapsed > 300000) {
+                        parsedSync.syncing = false
+                        parsedSync.syncStartedAt = null
+                    }
+                }
+                hydrated.dataSyncState = parsedSync
+            }
         } catch { }
         return hydrated
     })
@@ -118,6 +137,13 @@ export function AppProvider({ children }) {
             localStorage.setItem('signal-ai-run-state', JSON.stringify(state.aiRunState))
         } catch { }
     }, [state.aiRunState])
+
+    // Save data sync state to localStorage on change
+    useEffect(() => {
+        try {
+            localStorage.setItem('signal-data-sync-state', JSON.stringify(state.dataSyncState))
+        } catch { }
+    }, [state.dataSyncState])
 
     // Save preferences to localStorage on change
     useEffect(() => {
@@ -147,6 +173,7 @@ export function AppProvider({ children }) {
         setActiveCitations: (ids) => dispatch({ type: 'SET_ACTIVE_CITATIONS', payload: ids }),
         setLastSyncInfo: (info) => dispatch({ type: 'SET_LAST_SYNC_INFO', payload: info }),
         setAiRunState: (runState) => dispatch({ type: 'SET_AI_RUN_STATE', payload: runState }),
+        setDataSyncState: (syncState) => dispatch({ type: 'SET_DATA_SYNC_STATE', payload: syncState }),
         startAiAnalysis: async (timeWindow, ingest = false) => {
             // Guard against multiple clicks
             if (state.aiRunState.status === 'running') return;
@@ -163,20 +190,32 @@ export function AppProvider({ children }) {
             });
 
             try {
-                // Keep the global context alive while fetching
+                // Calls n8n directly (bypasses Vercel serverless proxy to avoid timeout)
                 const result = await fetchAIInsights({
-                    webhookUrl: '/api/ai-insights',
                     payload: { time_window: timeWindow || "7d", request_id: jobId, ingest }
                 });
+                // Inject analyzedAt timestamp so the UI can display when this run happened
+                result.analyzedAt = new Date().toISOString();
                 dispatch({
                     type: 'SET_AI_RUN_STATE',
                     payload: { status: 'completed', lastKnownData: result }
                 });
             } catch (err) {
                 console.error("Global Webhook fetch failed:", err);
+
+                // Differentiate error types for the UI
+                let errorMessage;
+                if (err.type === 'timeout') {
+                    errorMessage = 'Analysis timed out after 20 minutes. The backend may still be processing — try again shortly.';
+                } else if (err.type === 'http') {
+                    errorMessage = `Backend returned an error (HTTP ${err.status}). Please try again.`;
+                } else {
+                    errorMessage = 'Network error — unable to reach the analysis service. Check your connection and try again.';
+                }
+
                 dispatch({
                     type: 'SET_AI_RUN_STATE',
-                    payload: { status: 'failed', error: 'Live API unavailable. Could not complete analysis.' }
+                    payload: { status: 'failed', error: errorMessage }
                 });
             }
         }

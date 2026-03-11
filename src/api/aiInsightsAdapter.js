@@ -328,51 +328,68 @@ export function mapSignalAiInsightsResponse(backendData) {
 }
 
 /**
- * Main fetcher used by the UI
+ * Main fetcher used by the UI.
+ * Calls the n8n webhook directly (same as sendChatMessage) to avoid
+ * Vercel serverless function timeouts on long-running analysis runs.
+ * Includes a 20-minute AbortController timeout as the upper guard.
  */
 export async function fetchAIInsights(options = {}) {
+    const {
+        webhookUrl = 'https://n8n-fastest.protonaiagents.com/webhook/signal/run',
+        method = 'POST',
+        headers = { 'Content-Type': 'application/json' },
+        payload = {},
+        timeoutMs = 1200000  // 20 minutes
+    } = options;
+
+    const requestBody = {
+        ingest: payload.ingest ?? false,
+        time_window: payload.time_window ?? "7d",
+        max_insights: payload.max_insights ?? 5,
+        min_confidence: payload.min_confidence ?? 0.6,
+        request_id: payload.request_id ?? `signal-${Date.now()}`
+    };
+
+    console.log("AI Insights Adapter: Dispatching Request", requestBody);
+
+    // AbortController with 20-minute timeout guard
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     try {
-        const {
-            webhookUrl = '/api/ai-insights',
-            method = 'POST',
-            headers = { 'Content-Type': 'application/json' },
-            payload = {}
-        } = options;
-
-        // Use sample if explicitly requested or testing locally without standard setup
-        if (options.useMock) {
-            console.log("AI Insights Adapter: Using mock data");
-            return new Promise(resolve => {
-                setTimeout(() => resolve(mapSignalAiInsightsResponse(SAMPLE_WEBHOOK_RESPONSE)), 800);
-            });
-        }
-
-        const requestBody = {
-            ingest: payload.ingest ?? false,
-            time_window: payload.time_window ?? "7d",
-            max_insights: payload.max_insights ?? 5,
-            min_confidence: payload.min_confidence ?? 0.6,
-            request_id: payload.request_id ?? `signal-${Date.now()}`
-        };
-
-        console.log("AI Insights Adapter: Dispatching Request", requestBody);
-
         const response = await fetch(webhookUrl, {
             method,
             headers,
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
         });
 
+        clearTimeout(timeoutId);
+
         if (!response.ok) {
-            throw new Error(`Webhook responded with status ${response.status}`);
+            const err = new Error(`Webhook responded with status ${response.status}`);
+            err.type = 'http';
+            err.status = response.status;
+            throw err;
         }
 
         const data = await response.json();
-
-        // Removed `console.log` of raw backend payload to avoid leaking internal structures to client terminal
         return mapSignalAiInsightsResponse(data);
 
     } catch (error) {
+        clearTimeout(timeoutId);
+
+        // Tag the error type for the caller to differentiate
+        if (error.name === 'AbortError') {
+            const err = new Error('Analysis timed out after 20 minutes. The backend may still be processing.');
+            err.type = 'timeout';
+            throw err;
+        }
+
+        if (!error.type) {
+            error.type = 'network';
+        }
+
         console.error("AI Insights Adapter: Fetch Failed", error);
         throw error;
     }
