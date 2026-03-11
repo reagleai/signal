@@ -93,7 +93,7 @@ export default function FeedbackButton() {
     }
 
     return (
-        <div className="fixed bottom-12 right-4 sm:bottom-14 sm:right-6 z-50" ref={panelRef}>
+        <div className="fixed bottom-6 right-4 sm:bottom-8 sm:right-6 z-50" ref={panelRef}>
             {/* Expanded panel */}
             {open && (
                 <div
