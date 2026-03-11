@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Sparkles, ArrowRight, AlertCircle } from 'lucide-react'
+import { Sparkles, ArrowRight, AlertCircle, Copy, Check } from 'lucide-react'
 import Spinner from './Spinner'
 import CitationBadge from './CitationBadge'
 import { sendChatMessage } from '../../api/aiInsightsAdapter'
@@ -31,6 +31,14 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(false)
     const [expanded, setExpanded] = useState(false)
+    const [copiedIdx, setCopiedIdx] = useState(null)
+
+    const handleCopy = (text, idx) => {
+        navigator.clipboard.writeText(text).then(() => {
+            setCopiedIdx(idx)
+            setTimeout(() => setCopiedIdx(null), 1500)
+        })
+    }
 
     // Stable session ID for this conversation thread
     const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
@@ -141,8 +149,16 @@ export default function ChatBot({ scope = 'metrics', placeholder, suggestedQueri
                                         <span className="text-[11px] font-semibold text-[#FF9900]">Signal AI</span>
                                         <span className="text-[10px] text-[#9CA3A3]">{formatTime(msg.time)}</span>
                                     </div>
-                                    <div className="bg-[#F7F8FA] border border-[#E8EAED] rounded-xl rounded-tl-sm px-4 py-3 text-[13px] text-[#0F1111] leading-relaxed max-w-[95%] sm:max-w-[90%] whitespace-pre-wrap">
+                                    <div className="bg-[#F7F8FA] border border-[#E8EAED] rounded-xl rounded-tl-sm px-4 py-3 text-[13px] text-[#0F1111] leading-relaxed max-w-[95%] sm:max-w-[90%] whitespace-pre-wrap relative group">
                                         {renderMessageWithCitations(msg.text)}
+                                        <button
+                                            onClick={() => handleCopy(msg.text, i)}
+                                            className="absolute top-2 right-2 p-1 rounded-md bg-white/80 border border-[#E8EAED] text-[#9CA3A3] hover:text-[#0F1111] hover:border-[#C7CACA] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer"
+                                            aria-label="Copy response"
+                                            title={copiedIdx === i ? 'Copied!' : 'Copy to clipboard'}
+                                        >
+                                            {copiedIdx === i ? <Check size={13} className="text-green-600" /> : <Copy size={13} />}
+                                        </button>
                                     </div>
                                     {/* Citations hidden for V1 
                                     {msg.citations && (
