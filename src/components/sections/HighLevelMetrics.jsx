@@ -145,7 +145,7 @@ export default function HighLevelMetrics() {
     }
 
     return (
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8" id="section-metrics" role="tabpanel" aria-label="High-Level Metrics">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-8" id="section-metrics" role="tabpanel" aria-label="High-Level Metrics">
             {/* ── V2 FROSTED OVERLAY ── */}
             <div className="relative group">
                 <div className="absolute inset-0 z-20 pointer-events-none">

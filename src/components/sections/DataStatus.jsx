@@ -138,7 +138,7 @@ export default function DataStatus() {
     const Skeleton = ({ className = '' }) => <div className={`bg-[#E8EAED] rounded-lg animate-pulse ${className}`} />
 
     return (
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8" id="section-data-status" role="tabpanel" aria-label="Data Status">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-24 sm:pb-8" id="section-data-status" role="tabpanel" aria-label="Data Status">
 
             {/* Page Header */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">

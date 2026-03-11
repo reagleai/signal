@@ -49,7 +49,7 @@ export default function SectionNav() {
                     {state.activeSection === 'data-status' ? (
                         <div className="flex items-center text-[11px] sm:text-[12px] text-[#9CA3A3]">
                             <Calendar size={13} className="mr-1" />
-                            <span className="hidden sm:inline">Last sync: </span>{state.lastSyncInfo?.lastGlobalSyncTime || 'Loading…'}
+                            <span className="hidden sm:inline">Last sync: </span>{state.lastSyncInfo?.lastGlobalSyncTime || 'Run sync to fetch latest data'}
                         </div>
                     ) : (
                         <DateRangePicker
