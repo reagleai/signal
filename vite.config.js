@@ -32,7 +32,9 @@ export default defineConfig(({ mode }) => {
           target: targetDomain,
           changeOrigin: true,
           secure: false,
-          rewrite: () => `${basePath}/api-data-sources-sync`
+          rewrite: () => `${basePath}/api-data-sources-sync`,
+          timeout: 300000,
+          proxyTimeout: 300000
         },
         '/api/metrics-kpi': {
           target: targetDomain,

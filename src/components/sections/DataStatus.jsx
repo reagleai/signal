@@ -156,7 +156,9 @@ export default function DataStatus() {
         if (syncing) return
         setSyncing(true)
         addToast({ id: Date.now(), type: 'info', message: 'Re-syncing all sources…' })
-        await fetchData()
+        // Keep syncing state active for at least 5 minutes
+        const minDuration = new Promise(resolve => setTimeout(resolve, 300000));
+        await Promise.all([fetchData(), minDuration]);
         addToast({ id: Date.now(), type: 'success', message: 'Sources refreshed.' })
         setSyncing(false)
     }
