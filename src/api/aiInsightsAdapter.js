@@ -273,7 +273,9 @@ export function mapSignalAiInsightsResponse(backendData) {
 
         const rank = insight.rank || (index + 1);
         const urgency = rank === 1 ? 'critical' : (rank <= 3 ? 'high' : 'medium');
-        const mappedSources = Array.from(sourcesSet).map(s => LISP_TO_SOURCE_MAP[s.toLowerCase()] || (s.charAt(0).toUpperCase() + s.slice(1)));
+        
+        // Preserve actual webhook sources instead of forcing them through LISP_TO_SOURCE_MAP for UI chips
+        const mappedSources = Array.from(sourcesSet);
 
         return {
             id: `insight-${rank}-${Date.now()}`,

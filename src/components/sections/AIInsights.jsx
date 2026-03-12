@@ -296,7 +296,7 @@ export default function AIInsights() {
 
                                                     {/* ROW 4 — Reason code tags */}
                                                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mt-1">
-                                                        <span className="text-[10px] sm:text-[11px] text-[#9CA3A3] mr-1">Driving return codes:</span>
+                                                        <span className="text-[10px] sm:text-[11px] text-[#9CA3A3] mr-1">Supporting Reasons:</span>
                                                         {problem.reasonCodes.map(code => (
                                                             <span key={code} className="flex items-center gap-1 sm:gap-1.5 bg-[#F7F8FA] border border-[#E8EAED] rounded-full px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] text-[#565959] font-medium">
                                                                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: reasonCodeColors[code] || '#9CA3A3' }} />
@@ -315,32 +315,28 @@ export default function AIInsights() {
                                         {/* ── EXPANDED SECTION ── */}
                                         <div style={{ maxHeight: isExpanded ? '1200px' : '0px', opacity: isExpanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 300ms ease, opacity 200ms ease' }}>
                                             <div className="border-t border-[#F0F0F0] pt-4 sm:pt-5 pb-4 sm:pb-5 px-4 sm:px-5">
-                                                {/* What each source found (Hidden for V1) */}
-                                                {false && (
-                                                    <>
-                                                        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#9CA3A3] mb-4">What each source found</h3>
-                                                        {Object.entries(problem.nodeProblems).map(([source, items]) => (
-                                                            <div key={source} className="mb-4 last:mb-0">
-                                                                <div className="flex items-center gap-2 mb-2">
-                                                                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: sourceColors[source] || '#9CA3A3' }} />
-                                                                    <span className="text-[12px] font-semibold text-[#0F1111]">{source}</span>
-                                                                </div>
-                                                                {items.map((item, idx) => (
-                                                                    <div key={idx} className="bg-[#F7F8FA] rounded-lg px-3 sm:px-4 py-3 mb-1.5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 hover:bg-[#FFF8EE] transition-colors">
-                                                                        <span className="text-[12px] sm:text-[13px] text-[#0F1111] flex-1">{item.title}</span>
-                                                                        <div className="flex items-center gap-2">
-                                                                            {item.count !== null && (
-                                                                                <span className="bg-[#FF9900]/10 text-[#B7791F] rounded-full px-2 py-0.5 text-[11px] font-semibold">{item.count} events</span>
-                                                                            )}
-                                                                            {item.citationIds.map(id => (
-                                                                                <CitationBadge key={id} number={id} onClick={(e) => { e.stopPropagation(); setActiveCitations([id]) }} />
-                                                                            ))}
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        ))}
-                                                    </>
+                                                {/* Summary block */}
+                                                {problem.summary && (
+                                                    <div className="mb-3">
+                                                        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#9CA3A3] mb-1.5">Summary</h3>
+                                                        <p className="text-[13px] text-[#0F1111] leading-relaxed line-clamp-3">
+                                                            {problem.summary}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {/* Sources block */}
+                                                {problem.sources && problem.sources.length > 0 && (
+                                                    <div className="mb-4">
+                                                        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#9CA3A3] mb-1.5">Sources</h3>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {problem.sources.map(s => (
+                                                                <span key={s} className="bg-[#F7F8FA] border border-[#E8EAED] rounded-full px-2.5 py-0.5 text-[11px] text-[#565959] font-medium">
+                                                                    {s}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
                                                 )}
 
                                                 {/* Sub-reason drivers */}
@@ -475,7 +471,7 @@ export default function AIInsights() {
                             scope="insights"
                             title="Ask the Master PM Node"
                             subtitle="Scoped to the 5 problems above. All answers include reason code context."
-                            placeholder='e.g. "Why is the checkout crash ranked #1?" or "Which return code is Problem 2 driving?"'
+                            placeholder=""
                             suggestedQueries={chatQuestions}
                         />
                     </div>
