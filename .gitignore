@@ -50,3 +50,8 @@ test-*.png
 
 # Stale audit artifacts
 *.resolved
+
+# Assignment Materials & Data Files
+Assignment*.md
+Assignment*.json
+*.xlsx
