@@ -1,6 +1,6 @@
 import { useApp } from '../../context/AppContext'
 
-export default function Navbar() {
+export default function Navbar({ onBackToLanding }) {
     const { state } = useApp()
     const syncTime = state.lastSyncInfo?.lastGlobalSyncTime || 'Loading…'
 
@@ -26,7 +26,13 @@ export default function Navbar() {
                 {/* Sub-label */}
                 <div className="hidden md:flex flex-col justify-center ml-1 border-l border-white/20 pl-3">
                     <span className="text-[11px] text-white/60">Returns Discovery</span>
-                    <span className="text-[10px] text-white/50">Internal Tool</span>
+                    {onBackToLanding ? (
+                        <button onClick={onBackToLanding} className="text-[10px] text-[#FF9900]/70 hover:text-[#FF9900] transition-colors text-left cursor-pointer">
+                            ← Overview
+                        </button>
+                    ) : (
+                        <span className="text-[10px] text-white/50">Internal Tool</span>
+                    )}
                 </div>
             </div>
 

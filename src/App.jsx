@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { useApp } from './context/AppContext'
 import { useSession } from './hooks/useSession'
+
+import LandingPage from './components/LandingPage'
 
 import Navbar from './components/layout/Navbar'
 import SectionNav from './components/layout/SectionNav'
@@ -16,9 +19,29 @@ export default function App() {
     const { state } = useApp()
     useSession()
 
+    const [view, setView] = useState(() => {
+        try {
+            return localStorage.getItem('signal-view') === 'dashboard' ? 'dashboard' : 'landing'
+        } catch { return 'landing' }
+    })
+
+    const handleEnterDashboard = () => {
+        setView('dashboard')
+        try { localStorage.setItem('signal-view', 'dashboard') } catch {}
+    }
+
+    const handleBackToLanding = () => {
+        setView('landing')
+        try { localStorage.setItem('signal-view', 'landing') } catch {}
+    }
+
+    if (view === 'landing') {
+        return <LandingPage onEnterDashboard={handleEnterDashboard} />
+    }
+
     return (
         <div className="h-screen w-screen overflow-hidden flex flex-col bg-[#F7F8FA] font-['Inter']">
-            <Navbar />
+            <Navbar onBackToLanding={handleBackToLanding} />
             <SectionNav />
 
             <main className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth" role="main">
