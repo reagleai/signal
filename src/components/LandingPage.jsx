@@ -50,8 +50,8 @@ const METRICS = [
     { l: 'Signal Adoption', b: '0%', g: '60%', m: 'PM tagging source of problem definition' },
     { l: 'Trust & Retention', b: '—', g: 'Stable weekly usage', m: 'Unique weekly logins, session depth, return rate' },
 ]
-const P2 = ['Nightly scheduled pipeline — remove manual trigger','Live KPI dashboard replacing mock data','Citation split-pane linking claims to raw evidence','LLM Judge Nodes validating groundedness','Per-category RAG namespaces (10+ vs. current 5)']
-const P3 = ['Embed into existing PM toolchain — zero context-switching','Offline evals against historical problem definitions','Expand to adjacent domains: payments, logistics, fulfillment','Product-led growth through PM credibility in leadership reviews']
+const P2 = ['Nightly scheduled pipeline — remove manual trigger', 'Live KPI dashboard replacing mock data', 'Citation split-pane linking claims to raw evidence', 'LLM Judge Nodes validating groundedness', 'Per-category RAG namespaces (10+ vs. current 5)']
+const P3 = ['Embed into existing PM toolchain — zero context-switching', 'Offline evals against historical problem definitions', 'Expand to adjacent domains: payments, logistics, fulfillment', 'Product-led growth through PM credibility in leadership reviews']
 const GAP_CARDS = [
     { t: 'Qualitative-First Tools', b: "Platforms like Dovetail and Productboard excel at synthesizing user interviews — but can't ingest or query large-scale quantitative backend data like return rates, refund volumes, or fraud patterns.", I: MessageSquare },
     { t: 'Behavioral Analytics', b: "Tools like Amplitude and Mixpanel track digital behavior — clicks, funnels, sessions — but can't map physical supply chain events or subjective customer feedback to operational outcomes.", I: TrendingUp },
@@ -62,10 +62,10 @@ const GAP_CARDS = [
 const SL = ({ children }) => <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-[#FF9900] mb-3">{children}</div>
 const SH = ({ children }) => <h2 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111] leading-[1.18]">{children}</h2>
 const Badge = ({ s }) => s === 'live'
-    ? <span className="inline-flex items-center gap-1 bg-[#067D62]/10 text-[#067D62] border border-[#067D62]/20 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"><CheckCircle size={10}/> Live</span>
-    : <span className="inline-flex items-center gap-1 bg-[#FFF8EE] text-[#B7791F] border border-[#FF9900]/20 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"><Clock size={10}/> Phase 2</span>
+    ? <span className="inline-flex items-center gap-1 bg-[#067D62]/10 text-[#067D62] border border-[#067D62]/20 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"><CheckCircle size={10} /> Live</span>
+    : <span className="inline-flex items-center gap-1 bg-[#FFF8EE] text-[#B7791F] border border-[#FF9900]/20 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"><Clock size={10} /> Phase 2</span>
 
-const Logo = ({ size = 26 }) => <svg width={size} height={size} viewBox="0 0 26 26" fill="none"><path d="M13 1L24.1244 7V19L13 25L1.87564 19V7L13 1Z" stroke="#FF9900" strokeWidth="2" fill="none"/></svg>
+const Logo = ({ size = 26 }) => <svg width={size} height={size} viewBox="0 0 26 26" fill="none"><path d="M13 1L24.1244 7V19L13 25L1.87564 19V7L13 1Z" stroke="#FF9900" strokeWidth="2" fill="none" /></svg>
 
 const Btn = ({ onClick, children, cls = '' }) => (
     <button onClick={onClick} className={`inline-flex items-center gap-2 bg-[#FF9900] text-white rounded-lg font-semibold hover:bg-[#E68A00] active:scale-[0.97] transition-all ${cls}`}>
@@ -89,7 +89,7 @@ export default function LandingPage({ onEnterDashboard }) {
                         <span className="text-[11px] text-white/60">Returns Discovery</span>
                     </div>
                 </div>
-                <Btn onClick={onEnterDashboard} cls="px-4 py-2 text-[13px]">Open Live Prototype <ArrowRight size={14}/></Btn>
+                <Btn onClick={onEnterDashboard} cls="px-4 py-2 text-[13px]">Open Live Prototype <ArrowRight size={14} /></Btn>
             </header>
 
             {/* ══ HERO ══ */}
@@ -109,7 +109,7 @@ export default function LandingPage({ onEnterDashboard }) {
                         Currently processing 5,700+ records across 5 data sources · 5 RAG knowledge bases · 3-tier LLM synthesis pipeline
                     </div>
                     <div className="lp-hero-entry lp-hero-entry-d4 mt-8">
-                        <Btn onClick={onEnterDashboard} cls="px-6 py-3 text-[14px] shadow-[0_4px_14px_rgba(255,153,0,0.35)]">Explore the Prototype <ArrowRight size={15}/></Btn>
+                        <Btn onClick={onEnterDashboard} cls="px-6 py-3 text-[14px] shadow-[0_4px_14px_rgba(255,153,0,0.35)]">Explore the Prototype <ArrowRight size={15} /></Btn>
                     </div>
                 </div>
             </section>
@@ -124,7 +124,7 @@ export default function LandingPage({ onEnterDashboard }) {
                             const Icon = c.I
                             return (
                                 <div key={c.t} className="lp-reveal lp-card-hover bg-[#F7F8FA] border border-[#E8EAED] rounded-xl p-5 sm:p-6">
-                                    <div className="w-9 h-9 rounded-lg bg-[#FF9900]/10 flex items-center justify-center mb-4"><Icon size={18} className="text-[#FF9900]"/></div>
+                                    <div className="w-9 h-9 rounded-lg bg-[#FF9900]/10 flex items-center justify-center mb-4"><Icon size={18} className="text-[#FF9900]" /></div>
                                     <h3 className="text-[14px] sm:text-[15px] font-semibold text-[#0F1111] mb-2">{c.t}</h3>
                                     <p className="text-[13px] text-[#565959] leading-relaxed">{c.b}</p>
                                 </div>
@@ -190,8 +190,8 @@ export default function LandingPage({ onEnterDashboard }) {
                             return (
                                 <div key={c.t} className="lp-reveal lp-card-hover bg-[#F7F8FA] border border-[#E8EAED] rounded-xl p-5">
                                     <div className="flex items-center justify-between mb-3">
-                                        <div className="w-9 h-9 rounded-lg bg-[#FF9900]/10 flex items-center justify-center"><Icon size={18} className="text-[#FF9900]"/></div>
-                                        <Badge s={c.s}/>
+                                        <div className="w-9 h-9 rounded-lg bg-[#FF9900]/10 flex items-center justify-center"><Icon size={18} className="text-[#FF9900]" /></div>
+                                        <Badge s={c.s} />
                                     </div>
                                     <h3 className="text-[14px] font-semibold text-[#0F1111] mb-1.5">{c.t}</h3>
                                     <p className="text-[12px] sm:text-[13px] text-[#565959] leading-relaxed">{c.d}</p>
@@ -200,7 +200,7 @@ export default function LandingPage({ onEnterDashboard }) {
                         })}
                     </div>
                     <div className="lp-reveal bg-[#FFF8EE] border border-[#FF9900]/20 rounded-xl p-4 sm:p-5 mt-8 flex items-start gap-3">
-                        <Zap size={18} className="text-[#FF9900] flex-shrink-0 mt-0.5"/>
+                        <Zap size={18} className="text-[#FF9900] flex-shrink-0 mt-0.5" />
                         <p className="text-[12px] sm:text-[13px] text-[#565959] leading-relaxed">
                             The prototype runs on a live n8n pipeline connected to real data. <span className="font-semibold text-[#B7791F]">"Live" means the backend processes your request through the full RAG → LLM → synthesis flow in real time.</span>
                         </p>
@@ -222,7 +222,7 @@ export default function LandingPage({ onEnterDashboard }) {
                                     <div className="text-[14px] font-semibold text-[#0F1111] mb-2">{m.l}</div>
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className="text-[12px] text-[#9CA3A3]">Baseline: <span className="text-[#565959] font-medium">{m.b}</span></span>
-                                        <ArrowRight size={12} className="text-[#E8EAED]"/>
+                                        <ArrowRight size={12} className="text-[#E8EAED]" />
                                         <span className="text-[12px] text-[#FF9900] font-semibold">Target: {m.g}</span>
                                     </div>
                                     <div className="text-[11px] text-[#9CA3A3]">Measured by: {m.m}</div>
@@ -237,7 +237,7 @@ export default function LandingPage({ onEnterDashboard }) {
                             {TRADES.map(tr => (
                                 <div key={tr.t} className="lp-reveal lp-card-hover bg-white border border-[#E8EAED] rounded-xl p-4 sm:p-5">
                                     <div className="flex items-start gap-2.5">
-                                        <AlertTriangle size={14} className="text-[#B7791F] flex-shrink-0 mt-0.5"/>
+                                        <AlertTriangle size={14} className="text-[#B7791F] flex-shrink-0 mt-0.5" />
                                         <div>
                                             <div className="text-[13px] font-semibold text-[#0F1111] mb-1">{tr.t}</div>
                                             <p className="text-[12px] text-[#565959] leading-relaxed">{tr.d}</p>
@@ -262,7 +262,7 @@ export default function LandingPage({ onEnterDashboard }) {
                                 <span className="text-[13px] font-semibold text-[#0F1111]">Production MVP</span>
                             </div>
                             <ul className="flex flex-col gap-2.5">
-                                {P2.map(i => <li key={i} className="flex items-start gap-2 text-[12px] sm:text-[13px] text-[#565959]"><ChevronRight size={13} className="text-[#FF9900] flex-shrink-0 mt-0.5"/>{i}</li>)}
+                                {P2.map(i => <li key={i} className="flex items-start gap-2 text-[12px] sm:text-[13px] text-[#565959]"><ChevronRight size={13} className="text-[#FF9900] flex-shrink-0 mt-0.5" />{i}</li>)}
                             </ul>
                         </div>
                         <div className="lp-reveal lp-card-hover border border-[#E8EAED] rounded-xl p-5 sm:p-6 bg-[#F7F8FA]">
@@ -271,7 +271,7 @@ export default function LandingPage({ onEnterDashboard }) {
                                 <span className="text-[13px] font-semibold text-[#0F1111]">Scale & Embed</span>
                             </div>
                             <ul className="flex flex-col gap-2.5">
-                                {P3.map(i => <li key={i} className="flex items-start gap-2 text-[12px] sm:text-[13px] text-[#565959]"><ChevronRight size={13} className="text-[#9CA3A3] flex-shrink-0 mt-0.5"/>{i}</li>)}
+                                {P3.map(i => <li key={i} className="flex items-start gap-2 text-[12px] sm:text-[13px] text-[#565959]"><ChevronRight size={13} className="text-[#9CA3A3] flex-shrink-0 mt-0.5" />{i}</li>)}
                             </ul>
                         </div>
                     </div>
@@ -280,21 +280,21 @@ export default function LandingPage({ onEnterDashboard }) {
 
             {/* ══ BOTTOM CTA ══ */}
             <section className="bg-[#232F3E] relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#232F3E] via-[#2a3a4e] to-[#232F3E] pointer-events-none"/>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#232F3E] via-[#2a3a4e] to-[#232F3E] pointer-events-none" />
                 <div className="relative max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20 text-center lp-reveal">
                     <h2 className="text-[22px] sm:text-[28px] font-bold text-white mb-3">The prototype is live. The pipeline is real.</h2>
                     <p className="text-[13px] sm:text-[14px] text-white/60 mb-8 max-w-[480px] mx-auto">
                         Built with n8n · Pinecone · DeepSeek R1 · React — processing 5,700+ records through a multi-source AI synthesis pipeline.
                     </p>
-                    <Btn onClick={onEnterDashboard} cls="px-8 py-3.5 text-[15px] shadow-[0_4px_20px_rgba(255,153,0,0.4)]">Open Live Prototype <ArrowRight size={16}/></Btn>
+                    <Btn onClick={onEnterDashboard} cls="px-8 py-3.5 text-[15px] shadow-[0_4px_20px_rgba(255,153,0,0.4)]">Open Live Prototype <ArrowRight size={16} /></Btn>
                 </div>
             </section>
 
             {/* ══ FOOTER ══ */}
             <footer className="bg-[#F7F8FA] border-t border-[#E8EAED] py-6 sm:py-8">
                 <div className="max-w-[1000px] mx-auto px-4 sm:px-8 flex items-center justify-between">
-                    <div className="flex items-center gap-2"><Logo size={18}/><span className="text-[13px] font-semibold text-[#0F1111]">Signal</span></div>
-                    <span className="text-[12px] text-[#9CA3A3]">Built by Ajay Sharma · 2025</span>
+                    <div className="flex items-center gap-2"><Logo size={18} /><span className="text-[13px] font-semibold text-[#0F1111]">Signal</span></div>
+                    <span className="text-[12px] text-[#9CA3A3]">Built by Ajay Sharma · 2026</span>
                 </div>
             </footer>
         </div>
