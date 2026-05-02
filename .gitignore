@@ -55,4 +55,4 @@ test-*.png
 Assignment*.md
 Assignment*.json
 *.xlsx
-"SIGNAL [ Development ].json"
+SIGNAL \[ Development \].json
