@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Database, Sparkles, MessageSquare, PenLine, Send, CheckCircle, Clock, ArrowRight, Layers, Brain, AlertTriangle, TrendingUp, ChevronRight, Zap, BarChart2, FileText } from 'lucide-react'
+import { Database, Sparkles, MessageSquare, PenLine, Send, CheckCircle, Clock, ArrowRight, Layers, Brain, AlertTriangle, TrendingUp, ChevronRight, Zap, BarChart2, FileText, Search, ListChecks, Info } from 'lucide-react'
 
 /* ─── Scroll-reveal hook ────────────────────────────────── */
 function useScrollReveal() {
@@ -40,10 +40,10 @@ const TRADES = [
     { t: 'Human-in-the-loop by design', d: "Slower than full automation, but the PM's product judgment is the final filter." },
     { t: 'Prototype on n8n', d: 'Not production-scale, but validates pipeline logic and UX before infrastructure investment.' },
 ]
-const LAYERS = [
-    { n: '01', t: 'Ingest & Index', b: "Data from 5 source types is pulled, structured, and indexed into dedicated vector stores. Each source gets its own RAG namespace — keeping signals isolated so fraud data doesn't dilute quality complaints.", I: Database },
-    { n: '02', t: 'Per-Source LLM Analysis', b: 'Each RAG retrieves the most relevant evidence and passes it to a dedicated LLM node with a source-specific system prompt. A returns analyst node thinks differently than a fraud detection node. 5 lanes run in parallel.', I: Layers },
-    { n: '03', t: 'Master Synthesis', b: 'All lane outputs are merged and passed to a Master LLM Node. It synthesizes cross-source patterns, ranks the top problems by impact and frequency, and assigns confidence and groundedness scores.', I: Brain },
+const STEPS = [
+    { n: '01', t: 'Connect your data sources', b: 'Signal pulls from 5 data types: SQL return records, CRM transcripts, customer reviews, fraud/abuse flags, and NPS survey responses. Each source is indexed into its own knowledge base so signals stay clean.', I: Database },
+    { n: '02', t: 'Run the analysis', b: 'One click triggers a multi-stage AI pipeline. Each data source is analyzed by a specialized layer. Then a master synthesis ranks the results across all sources — in real time.', I: Search },
+    { n: '03', t: 'Get ranked problem signals', b: 'You receive the top 5 problems — ranked by impact and frequency, with confidence scores, supporting evidence, and cross-source patterns. Ask follow-up questions in the built-in chat.', I: ListChecks },
 ]
 const METRICS = [
     { l: 'Discovery Time', b: '7–8 hrs/week', g: '~2 hrs/week', m: 'Time logged on tool vs. manual extraction baseline' },
@@ -97,16 +97,16 @@ export default function LandingPage({ onEnterDashboard }) {
                 {/* Subtle gradient bg */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#F7F8FA] via-[#FFF8EE]/30 to-[#F7F8FA] pointer-events-none" />
                 <div className="relative max-w-[1000px] mx-auto px-4 sm:px-8 pt-16 sm:pt-24 pb-14 sm:pb-20">
-                    <div className="lp-hero-entry"><SL>THE PROBLEM</SL></div>
+                    <div className="lp-hero-entry"><SL>RETURNS DISCOVERY TOOL</SL></div>
                     <h1 className="lp-hero-entry lp-hero-entry-d1 text-[28px] sm:text-[42px] font-bold text-[#0F1111] leading-[1.12] max-w-[720px]">
-                        Product Managers shouldn't spend <span className="hero-accent-word">8 hours a week</span> finding problems to solve.
+                        Turn 5 fragmented data sources into <span className="hero-accent-word">ranked problem signals</span> — in minutes, not hours.
                     </h1>
                     <p className="lp-hero-entry lp-hero-entry-d2 text-[15px] sm:text-[17px] text-[#565959] mt-5 max-w-[640px] leading-relaxed">
-                        PMs who own high-volume operational areas — returns, refunds, post-purchase — pull data from 5+ disconnected systems every week just to figure out what to prioritize next. Signal automates the discovery layer so PMs can focus on product judgment, not data extraction.
+                        Signal ingests returns data, CRM transcripts, reviews, fraud signals, and NPS surveys, then surfaces the top 5 problems worth solving next — with evidence and confidence scores. Not raw insight dumps — <span className="font-semibold text-[#0F1111]">a ranked starting point for user research and roadmap prioritization.</span>
                     </p>
                     <div className="lp-hero-entry lp-hero-entry-d3 flex items-center gap-2 mt-6 text-[12px] text-[#9CA3A3]">
                         <span className="w-2 h-2 rounded-full bg-[#067D62] pulse-dot" />
-                        Currently processing 5,700+ records across 5 data sources · 5 RAG knowledge bases · 3-tier LLM synthesis pipeline
+                        Currently processing 5,700+ records across 5 sources · Live prototype with real data
                     </div>
                     <div className="lp-hero-entry lp-hero-entry-d4 mt-8">
                         <Btn onClick={onEnterDashboard} cls="px-6 py-3 text-[14px] shadow-[0_4px_14px_rgba(255,153,0,0.35)]">Explore the Prototype <ArrowRight size={15} /></Btn>
@@ -139,8 +139,8 @@ export default function LandingPage({ onEnterDashboard }) {
 
             {/* ══ HOW IT WORKS ══ */}
             <section className="max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20">
-                <div className="lp-reveal"><SL>HOW SIGNAL WORKS</SL></div>
-                <div className="lp-reveal"><SH>From raw data to ranked problems — in three layers.</SH></div>
+                <div className="lp-reveal"><SL>HOW IT WORKS</SL></div>
+                <div className="lp-reveal"><SH>From your data to prioritized signals — three steps.</SH></div>
 
                 {/* Source badges */}
                 <div className="flex flex-wrap gap-2 mt-8 mb-10 lp-stagger">
@@ -152,11 +152,11 @@ export default function LandingPage({ onEnterDashboard }) {
                     ))}
                 </div>
 
-                {/* Pipeline layers with connecting line */}
+                {/* User-first steps with connecting line */}
                 <div className="relative flex flex-col gap-4">
                     {/* Vertical connector */}
                     <div className="hidden sm:block absolute left-[19px] top-[48px] bottom-[48px] w-[2px] phase-timeline-line rounded-full flow-connector" />
-                    {LAYERS.map(l => {
+                    {STEPS.map(l => {
                         const Icon = l.I
                         return (
                             <div key={l.n} className="lp-reveal lp-card-hover relative bg-white border border-[#E8EAED] rounded-xl p-5 sm:p-6 flex items-start gap-4 sm:gap-5">
@@ -174,8 +174,11 @@ export default function LandingPage({ onEnterDashboard }) {
                         )
                     })}
                 </div>
-                <div className="lp-reveal mt-6 text-[11px] text-[#9CA3A3]">
-                    Built with n8n orchestration · DeepSeek R1 via OpenRouter · Pinecone vector storage · OpenAI embeddings
+
+                {/* Subtle implementation note */}
+                <div className="lp-reveal flex items-start gap-2.5 mt-6 text-[12px] text-[#9CA3A3]">
+                    <Info size={14} className="text-[#9CA3A3] flex-shrink-0 mt-0.5" />
+                    <span><span className="font-medium text-[#565959]">In this prototype:</span> Data sources connect via Google Sheets. Direct database integrations and scheduled runs are planned for the next phase.</span>
                 </div>
             </section>
 
@@ -282,11 +285,17 @@ export default function LandingPage({ onEnterDashboard }) {
             <section className="bg-[#232F3E] relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#232F3E] via-[#2a3a4e] to-[#232F3E] pointer-events-none" />
                 <div className="relative max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20 text-center lp-reveal">
-                    <h2 className="text-[22px] sm:text-[28px] font-bold text-white mb-3">The prototype is live. The pipeline is real.</h2>
-                    <p className="text-[13px] sm:text-[14px] text-white/60 mb-8 max-w-[480px] mx-auto">
-                        Built with n8n · Pinecone · DeepSeek R1 · React — processing 5,700+ records through a multi-source AI synthesis pipeline.
+                    <h2 className="text-[22px] sm:text-[28px] font-bold text-white mb-4">Not summarization — prioritization for decision-making.</h2>
+                    <p className="text-[13px] sm:text-[14px] text-white/70 mb-2 max-w-[560px] mx-auto leading-relaxed">
+                        Signal reduces PM synthesis time from hours to minutes by pulling fragmented return signals across sources, structuring them, and ranking the top problem signals for further validation.
+                    </p>
+                    <p className="text-[13px] sm:text-[14px] text-white/50 mb-8 max-w-[560px] mx-auto leading-relaxed">
+                        The output is not raw insight dumps — it is <span className="text-white/90 font-semibold">a ranked starting point for user research and roadmap prioritization.</span>
                     </p>
                     <Btn onClick={onEnterDashboard} cls="px-8 py-3.5 text-[15px] shadow-[0_4px_20px_rgba(255,153,0,0.4)]">Open Live Prototype <ArrowRight size={16} /></Btn>
+                    <div className="mt-6 text-[11px] text-white/30">
+                        Built with n8n · Pinecone · DeepSeek · React · Live prototype processing 5,700+ records
+                    </div>
                 </div>
             </section>
 
