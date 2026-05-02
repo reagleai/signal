@@ -8,6 +8,18 @@ export default function Navbar({ onBackToLanding }) {
         <header className="h-14 sm:h-16 bg-[#232F3E] px-4 sm:px-8 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.25)] flex-shrink-0 z-50">
             {/* Left group */}
             <div className="flex items-center gap-2 sm:gap-3">
+                {/* Back button */}
+                {onBackToLanding && (
+                    <button 
+                        onClick={onBackToLanding} 
+                        className="flex items-center gap-1 sm:gap-1.5 mr-1 sm:mr-2 px-1.5 py-1 -ml-1 rounded-md hover:bg-white/5 text-[#FF9900]/90 hover:text-[#FF9900] transition-colors cursor-pointer"
+                        aria-label="Back to Home"
+                    >
+                        <span className="text-[16px] leading-none mb-[2px]">←</span>
+                        <span className="hidden sm:inline text-[13px] font-medium">Back to Home</span>
+                    </button>
+                )}
+
                 {/* Hexagon logo */}
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Signal logo" role="img">
                     <path
@@ -26,13 +38,7 @@ export default function Navbar({ onBackToLanding }) {
                 {/* Sub-label */}
                 <div className="hidden md:flex flex-col justify-center ml-1 border-l border-white/20 pl-3">
                     <span className="text-[11px] text-white/60">Returns Discovery</span>
-                    {onBackToLanding ? (
-                        <button onClick={onBackToLanding} className="text-[10px] text-[#FF9900]/70 hover:text-[#FF9900] transition-colors text-left cursor-pointer">
-                            ← Overview
-                        </button>
-                    ) : (
-                        <span className="text-[10px] text-white/50">Internal Tool</span>
-                    )}
+                    <span className="text-[10px] text-white/50">Internal Tool</span>
                 </div>
             </div>
 
