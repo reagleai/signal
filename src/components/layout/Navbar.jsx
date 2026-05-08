@@ -38,7 +38,7 @@ export default function Navbar({ onBackToLanding }) {
 
             {/* Right group */}
             <div className="flex items-center gap-3 sm:gap-5">
-                {/* Data freshness indicator — hidden on mobile */}
+                {/* Data freshness indicator - hidden on mobile */}
                 <div className="hidden sm:flex items-center gap-2 bg-white/10 rounded-full px-3 py-2">
                     <span className="w-2 h-2 rounded-full bg-[#067D62] pulse-dot" />
                     <span className="text-[12px] text-white/80">

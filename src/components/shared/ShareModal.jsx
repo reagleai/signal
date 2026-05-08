@@ -31,7 +31,7 @@ export default function ShareModal({ isOpen, onClose, notePadItems = [], citatio
 
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
-    const briefText = `SIGNAL — RETURNS PROBLEM BRIEF
+    const briefText = `SIGNAL - RETURNS PROBLEM BRIEF
 Generated: ${today}
 Period: ${rangeLabel}
 

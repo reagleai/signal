@@ -7,7 +7,7 @@ import { formatISTTime, formatISTDate, formatISTFull } from '../../utils/dateFor
 import MetricCard from '../shared/MetricCard'
 import Badge from '../shared/Badge'
 
-// Visual identity per lane — n8n doesn't return these, so we derive them locally
+// Visual identity per lane - n8n doesn't return these, so we derive them locally
 const LANE_META = {
     returns: { iconBg: '#FF9900', iconInitial: 'DW', label: 'Data Warehouse' },
     crm: { iconBg: '#03363D', iconInitial: 'CRM', label: 'Customer Service' },
@@ -37,7 +37,7 @@ function normalizeSource(src) {
         ragStatus: src.ragStatus || 'Unknown',
         isIndexed,
         ragCount: Number(src.ragIndexed ?? 1),
-        namespace: src.namespace || '—',
+        namespace: src.namespace || '-',
     }
 }
 
@@ -77,7 +77,7 @@ export default function DataStatus() {
         activeSources: 5,
         ragIndexed: 5,
         recordsProcessed: '1,705',
-        lastGlobalSyncTime: '—',
+        lastGlobalSyncTime: '-',
         lastGlobalSyncTimeRaw: null
     }
     const [loading, setLoading] = useState(false)
@@ -123,7 +123,7 @@ export default function DataStatus() {
         }
     }
 
-    // No auto-fetch on mount — data starts as mock, only fetches when Re-sync is clicked
+    // No auto-fetch on mount - data starts as mock, only fetches when Re-sync is clicked
 
     const handleResync = async () => {
         if (syncing) return
@@ -144,7 +144,7 @@ export default function DataStatus() {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">
                 <div>
                     <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">
-                        SIGNAL — SECTION 1
+                        SIGNAL - SECTION 1
                     </div>
                     <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">
                         Data Integration Status
@@ -155,7 +155,7 @@ export default function DataStatus() {
                     </p>
                     {lastError && (
                         <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1">
-                            <XCircle size={12} /> Live data unavailable — showing cached data
+                            <XCircle size={12} /> Live data unavailable - showing cached data
                         </p>
                     )}
                 </div>
@@ -169,7 +169,7 @@ export default function DataStatus() {
                 </button>
             </div>
 
-            {/* Summary Cards — 3 cards (Batch Duration removed) */}
+            {/* Summary Cards - 3 cards (Batch Duration removed) */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 sm:mb-8">
                 {loading ? (
                     [1, 2, 3].map(i => (
@@ -339,7 +339,7 @@ export default function DataStatus() {
                     <div className="text-[14px] sm:text-[15px] font-semibold text-[#0F1111] mb-1">
                         Signal processed {typeof summary.recordsProcessed === 'number'
                             ? summary.recordsProcessed.toLocaleString()
-                            : summary.recordsProcessed} return events overnight — so you don't have to.
+                            : summary.recordsProcessed} return events overnight - so you don't have to.
                     </div>
                     <div className="text-[12px] sm:text-[13px] text-[#565959] leading-relaxed">
                         All {summary.ragIndexed} knowledge bases are indexed and ready. Signal is analyzing the currently connected source data and indexed knowledge layers for this workspace.

@@ -1,5 +1,5 @@
 /**
- * ⚠️ MOCK DATA — All values in this file are entirely fictional.
+ * ⚠️ MOCK DATA - All values in this file are entirely fictional.
  * No real company data, ticket IDs, financial figures, or user
  * information is represented here.
  */
@@ -303,7 +303,7 @@ export const masterProblems = [
     },
     {
         id: 2, rank: 2,
-        title: "Defective Items — Supplier Batch #A4421",
+        title: "Defective Items - Supplier Batch #A4421",
         summary: "Elevated defect rate traced to a single supplier batch shipped in the last 10 days, driving a spike in 'Defective / Quality Issues' and 'Damaged or Used Product' return reason codes. Batch A4421 defect rate is 7x above the 2% threshold.",
         confidence: 87, groundedness: 89, urgency: "high",
         isNew: false, isRecurring: true,
@@ -334,7 +334,7 @@ export const masterProblems = [
     {
         id: 3, rank: 3,
         title: "Slow Page Load on Product Detail Pages",
-        summary: "Product detail page load times exceeding 4s on mobile, increasing bounce rates and correlating with 'Wrong Item Was Sent — Inaccurate website description' returns. Customers cannot load all images before purchasing.",
+        summary: "Product detail page load times exceeding 4s on mobile, increasing bounce rates and correlating with 'Wrong Item Was Sent - Inaccurate website description' returns. Customers cannot load all images before purchasing.",
         confidence: 78, groundedness: 81, urgency: "high",
         isNew: false, isRecurring: false,
         sources: ["DW", "Zendesk"],
@@ -356,7 +356,7 @@ export const masterProblems = [
     },
     {
         id: 4, rank: 4,
-        title: "Wrong Item Delivered — Fulfillment Errors",
+        title: "Wrong Item Delivered - Fulfillment Errors",
         summary: "Fulfillment center packing errors sending wrong SKUs, concentrated in the Mumbai FC based on ticket origin data. Wrong SKU rate at Mumbai FC is 3.1% vs 0.9% baseline.",
         confidence: 71, groundedness: 76, urgency: "medium",
         isNew: false, isRecurring: true,
@@ -406,13 +406,13 @@ export const masterProblems = [
 export const citationLibrary = [
     { id: 1, source: "Zendesk", sourceColor: "#03363D", type: "ticket", ref: "Ticket #8992", preview: "User selected return reason: 'Defective or Quality Issues' and wrote: The app crashed on iOS 14.2 at the payment confirmation step. The item was never received but the return was filed as defective because there was no other matching option." },
     { id: 2, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Crash Rate by OS Version", tableData: { headers: ["OS Version", "Crash Rate"], rows: [["iOS 14.2", "8.4%"], ["iOS 14.1", "1.2%"], ["iOS 14.0", "1.0%"], ["Android 13", "0.9%"]] } },
-    { id: 3, source: "App Store Reviews", sourceColor: "#0D96F6", type: "review", ref: "Review #29481 — 1★", preview: "1★ review. Customer selected return reason: 'Wrong Item Was Sent > Inaccurate website description'. Comment: Product page showed all features working but the app crashed during checkout — couldn't verify the item matched. Returned it." },
-    { id: 4, source: "App Store Reviews", sourceColor: "#0D96F6", type: "review", ref: "Review #30012 — 1★", preview: "Got charged but no order was placed. Took 3 support tickets and 6 days to get my refund. Filed return as 'Item No Longer Needed — No longer needed/wanted' after the experience." },
+    { id: 3, source: "App Store Reviews", sourceColor: "#0D96F6", type: "review", ref: "Review #29481 - 1★", preview: "1★ review. Customer selected return reason: 'Wrong Item Was Sent > Inaccurate website description'. Comment: Product page showed all features working but the app crashed during checkout - couldn't verify the item matched. Returned it." },
+    { id: 4, source: "App Store Reviews", sourceColor: "#0D96F6", type: "review", ref: "Review #30012 - 1★", preview: "Got charged but no order was placed. Took 3 support tickets and 6 days to get my refund. Filed return as 'Item No Longer Needed - No longer needed/wanted' after the experience." },
     { id: 5, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Checkout Abandonment by Day", tableData: { headers: ["Day", "Abandonment Rate", "vs Avg"], rows: [["Wednesday", "34.2%", "+34%"], ["Thursday", "31.8%", "+25%"], ["Tuesday", "24.1%", "baseline"]] } },
-    { id: 6, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Defect Rate — Batch A4421", tableData: { headers: ["Batch", "Defect Rate", "Threshold"], rows: [["A4421", "14.2%", "2.0% max"], ["A4420", "1.8%", "2.0% max"], ["A4419", "1.6%", "2.0% max"]] } },
-    { id: 7, source: "Productboard", sourceColor: "#8B5CF6", type: "feature", ref: "Request #PR-881", preview: "PM Request: Add per-batch defect rate tracking in supplier dashboard. Batch A4421 defect rate was 14.2% — we only found out after returns spiked under 'Defective / Quality Issues' and 'Damaged or Used Product' codes." },
-    { id: 8, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Mobile PDP Load Time — Feb 22–28", tableData: { headers: ["Platform", "Avg Load Time", "SLA"], rows: [["Mobile Web", "4.3s", "2.0s"], ["Desktop", "1.8s", "2.0s"], ["App", "2.2s", "2.0s"]] } },
-    { id: 9, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Mobile Bounce Rate — Feb 22–28", tableData: { headers: ["Page Type", "Bounce Rate", "WoW"], rows: [["Product Detail", "54.2%", "+22%"], ["Cart", "31.1%", "+4%"], ["Homepage", "18.3%", "-1%"]] } },
+    { id: 6, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Defect Rate - Batch A4421", tableData: { headers: ["Batch", "Defect Rate", "Threshold"], rows: [["A4421", "14.2%", "2.0% max"], ["A4420", "1.8%", "2.0% max"], ["A4419", "1.6%", "2.0% max"]] } },
+    { id: 7, source: "Productboard", sourceColor: "#8B5CF6", type: "feature", ref: "Request #PR-881", preview: "PM Request: Add per-batch defect rate tracking in supplier dashboard. Batch A4421 defect rate was 14.2% - we only found out after returns spiked under 'Defective / Quality Issues' and 'Damaged or Used Product' codes." },
+    { id: 8, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Mobile PDP Load Time - Feb 22–28", tableData: { headers: ["Platform", "Avg Load Time", "SLA"], rows: [["Mobile Web", "4.3s", "2.0s"], ["Desktop", "1.8s", "2.0s"], ["App", "2.2s", "2.0s"]] } },
+    { id: 9, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Mobile Bounce Rate - Feb 22–28", tableData: { headers: ["Page Type", "Bounce Rate", "WoW"], rows: [["Product Detail", "54.2%", "+22%"], ["Cart", "31.1%", "+4%"], ["Homepage", "18.3%", "-1%"]] } },
     { id: 10, source: "Data Warehouse", sourceColor: "#FF9900", type: "query", ref: "Wrong SKU Rate by Fulfillment Center", tableData: { headers: ["FC", "Wrong SKU Rate", "vs Avg"], rows: [["Mumbai FC", "3.1%", "+2.3pp"], ["Delhi FC", "0.9%", "baseline"], ["Bangalore FC", "0.7%", "-0.1pp"]] } },
-    { id: 11, source: "Zendesk", sourceColor: "#03363D", type: "ticket", ref: "Ticket Cluster — Refund Delays", preview: "Cluster of 31 tickets this week. Return reason filed: 'Item No Longer Needed — No longer needed/wanted'. Customer comments cite waiting 8–12 days for refund on previous order as reason for not re-ordering. 27% of these are repeat submissions with no response." }
+    { id: 11, source: "Zendesk", sourceColor: "#03363D", type: "ticket", ref: "Ticket Cluster - Refund Delays", preview: "Cluster of 31 tickets this week. Return reason filed: 'Item No Longer Needed - No longer needed/wanted'. Customer comments cite waiting 8–12 days for refund on previous order as reason for not re-ordering. 27% of these are repeat submissions with no response." }
 ]

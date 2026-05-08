@@ -177,12 +177,12 @@ export default function HighLevelMetrics() {
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 sm:mb-8">
                         <div>
                             <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">
-                                SIGNAL — SECTION 2
+                                SIGNAL - SECTION 2
                             </div>
                             <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">High-Level Metrics</h1>
                             <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[540px]">
                                 A consolidated view of your returns data across the primary Data Warehouse, Tableau,
-                                and Zendesk. Identical to what you see manually — but already pulled and structured.
+                                and Zendesk. Identical to what you see manually - but already pulled and structured.
                             </p>
                         </div>
                         <div className="bg-[#FFF8EE] border border-[#FF9900]/30 rounded-full px-4 py-2 flex items-center gap-2 self-start">
@@ -191,7 +191,7 @@ export default function HighLevelMetrics() {
                         </div>
                     </div>
 
-                    {/* ── ROW 1 — 8 METRIC CARDS ── */}
+                    {/* ── ROW 1 - 8 METRIC CARDS ── */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <MetricCard label="Return Rate" value={`${metricsObj.returnRate.value}`} unit="%" delta={metricsObj.returnRate.delta} deltaLabel="vs prior period" direction={metricsObj.returnRate.direction} source="Data Warehouse" />
                         <MetricCard label="Return Volume" value={metricsObj.returnVolume.value.toLocaleString()} delta={metricsObj.returnVolume.delta} deltaLabel="vs prior period" direction={metricsObj.returnVolume.direction} source="Data Warehouse" />
@@ -211,9 +211,9 @@ export default function HighLevelMetrics() {
                         <MetricCard label="Non-Returnable Items" value={`${metricsObj.nonReturnableRate.value}`} unit="%" delta={metricsObj.nonReturnableRate.delta} deltaLabel="vs prior period" direction={metricsObj.nonReturnableRate.direction} source="Data Warehouse" />
                     </div>
 
-                    {/* ── ROW 2 — TREND + SPARKLINE ── */}
+                    {/* ── ROW 2 - TREND + SPARKLINE ── */}
                     <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 mb-6">
-                        {/* LEFT — Weekly Trend */}
+                        {/* LEFT - Weekly Trend */}
                         <div className="bg-white rounded-xl border border-[#E8EAED] shadow-[0_1px_4px_rgba(0,0,0,0.08)] p-4 sm:p-6">
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-5">
                                 <div>
@@ -264,9 +264,9 @@ export default function HighLevelMetrics() {
                             <div className="text-[10px] text-[#6B7280] mt-2">Source: Data Warehouse · Zendesk</div>
                         </div>
 
-                        {/* RIGHT — Return Rate 8-Week */}
+                        {/* RIGHT - Return Rate 8-Week */}
                         <div className="bg-white rounded-xl border border-[#E8EAED] shadow-[0_1px_4px_rgba(0,0,0,0.08)] p-4 sm:p-6">
-                            <h2 className="text-[15px] sm:text-[16px] font-semibold text-[#0F1111]">Return Rate — 8 Week View</h2>
+                            <h2 className="text-[15px] sm:text-[16px] font-semibold text-[#0F1111]">Return Rate - 8 Week View</h2>
                             <div className="text-[12px] text-[#9CA3A3] mt-0.5 mb-2">Is the situation improving?</div>
                             <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-3 py-1.5 mb-4">
                                 <TrendingUp size={13} className="text-red-600" />
@@ -294,7 +294,7 @@ export default function HighLevelMetrics() {
                         </div>
                     </div>
 
-                    {/* ── ROW 3 — RETURN REASON CODE EXPLORER ── */}
+                    {/* ── ROW 3 - RETURN REASON CODE EXPLORER ── */}
                     <div id="reason-code-explorer" className="bg-white rounded-xl border border-[#E8EAED] shadow-[0_1px_4px_rgba(0,0,0,0.08)] p-4 sm:p-6 mb-6">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-6">
                             <div>
@@ -420,7 +420,7 @@ export default function HighLevelMetrics() {
                         </div>
                     </div>
 
-                    {/* ── ROW 4 — REFUND BREAKDOWN + GROWING SUB-REASONS ── */}
+                    {/* ── ROW 4 - REFUND BREAKDOWN + GROWING SUB-REASONS ── */}
                     <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-4 mb-6">
                         {/* LEFT: Refund Type */}
                         <div className="bg-white rounded-xl border border-[#E8EAED] shadow-[0_1px_4px_rgba(0,0,0,0.08)] p-4 sm:p-6">
@@ -494,7 +494,7 @@ export default function HighLevelMetrics() {
                         </div>
                     </div>
 
-                    {/* ── ROW 5 — CHATBOT ── */}
+                    {/* ── ROW 5 - CHATBOT ── */}
                     <ChatBot
                         scope="metrics"
                         title="Ask about these metrics"

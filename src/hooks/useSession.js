@@ -12,7 +12,7 @@ export function useSession() {
         try {
             const saved = localStorage.getItem('signal-preferences')
             if (saved) prefs = JSON.parse(saved) ?? {}
-        } catch { /* corrupted data — reset */ }
+        } catch { /* corrupted data - reset */ }
         prefs.sessionCount = (prefs.sessionCount || 0) + 1
         localStorage.setItem('signal-preferences', JSON.stringify(prefs))
 

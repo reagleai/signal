@@ -112,7 +112,7 @@ export default function AIInsights() {
                 <div className="flex-[3] min-w-0 w-full xl:w-auto">
                     {/* PAGE HEADER */}
                     <div className="mb-6">
-                        <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL — SECTION 3</div>
+                        <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-widest text-[#FF9900] mb-2">SIGNAL - SECTION 3</div>
                         <h1 className="text-[22px] sm:text-[28px] font-bold text-[#0F1111]">AI Insights</h1>
                         <p className="text-[13px] sm:text-[14px] text-[#565959] mt-2 leading-relaxed max-w-[560px]">
                             {hasData ? `${masterProblems.length} high potential problem${masterProblems.length !== 1 ? 's' : ''}` : 'High potential problems'} identified and synthesized by Signal's Master PM Node from {activeSourceCount} data sources and {activeRagCount} knowledge bases. Confidence scores and groundedness validated by LLM Judge nodes.
@@ -245,12 +245,12 @@ export default function AIInsights() {
 
                                                 {/* Main content */}
                                                 <div className="flex-1 min-w-0">
-                                                    {/* ROW 1 — Title only */}
+                                                    {/* ROW 1 - Title only */}
                                                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-2">
                                                         <span className="text-[14px] sm:text-[15px] font-semibold text-[#0F1111]">{problem.title}</span>
                                                     </div>
 
-                                                    {/* ROW 2 — Signal metrics */}
+                                                    {/* ROW 2 - Signal metrics */}
                                                     <div className="flex items-center gap-3 sm:gap-5 flex-wrap mb-3">
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[#9CA3A3]">Confidence</span>
@@ -280,7 +280,7 @@ export default function AIInsights() {
                                                         </div>
                                                     </div>
 
-                                                    {/* ROW 3 — Source chips + citations (Hidden for V1) */}
+                                                    {/* ROW 3 - Source chips + citations (Hidden for V1) */}
                                                     {false && (
                                                         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-2">
                                                             {problem.sources.map(s => (
@@ -294,7 +294,7 @@ export default function AIInsights() {
                                                         </div>
                                                     )}
 
-                                                    {/* ROW 4 — Reason code tags */}
+                                                    {/* ROW 4 - Reason code tags */}
                                                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mt-1">
                                                         <span className="text-[10px] sm:text-[11px] text-[#9CA3A3] mr-1">Supporting Reasons:</span>
                                                         {problem.reasonCodes.map(code => (
@@ -379,7 +379,7 @@ export default function AIInsights() {
                     )}
                 </div>
 
-                {/* ═══ RIGHT COLUMN (sticky) — stacks below on mobile ═══ */}
+                {/* ═══ RIGHT COLUMN (sticky) - stacks below on mobile ═══ */}
                 <div className="flex-[2] min-w-0 w-full xl:w-auto flex flex-col gap-6 xl:sticky xl:top-4">
 
                     {/* ── CARD 2: INTELLIGENT NOTEPAD ── */}

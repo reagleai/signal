@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const n8nBase = env.N8N_BASE_URL;
 
   if (!n8nBase) {
-    console.warn('\x1b[33m⚠ N8N_BASE_URL not set in .env — API proxy routes will not work in dev mode.\x1b[0m');
+    console.warn('\x1b[33m⚠ N8N_BASE_URL not set in .env - API proxy routes will not work in dev mode.\x1b[0m');
   }
 
   let targetDomain = n8nBase ? new URL(n8nBase).origin : 'http://localhost:5678';

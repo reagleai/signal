@@ -10,7 +10,7 @@ const mockResponses = {
         citations: [1, 2]
     },
     insights: {
-        text: "Problem #1 is ranked highest because it has the strongest cross-source signal — appearing in Zendesk tickets [1], App Store reviews [3], and Data Warehouse crash data [2]. Its groundedness score of 94% means the LLM Judge validated the recommendation against quantitative frequency data.",
+        text: "Problem #1 is ranked highest because it has the strongest cross-source signal - appearing in Zendesk tickets [1], App Store reviews [3], and Data Warehouse crash data [2]. Its groundedness score of 94% means the LLM Judge validated the recommendation against quantitative frequency data.",
         citations: [1, 2, 3]
     }
 }

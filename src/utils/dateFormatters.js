@@ -1,17 +1,17 @@
 /**
- * IST (Indian Standard Time) formatting helpers — shared across components.
+ * IST (Indian Standard Time) formatting helpers - shared across components.
  */
 const IST_TZ = 'Asia/Kolkata'
 
 export function formatISTTime(isoOrStr) {
-    if (!isoOrStr) return '—'
+    if (!isoOrStr) return '-'
     const d = new Date(isoOrStr)
     if (isNaN(d.getTime())) return String(isoOrStr)
     return d.toLocaleTimeString('en-IN', { timeZone: IST_TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })
 }
 
 export function formatISTDate(isoOrStr) {
-    if (!isoOrStr) return '—'
+    if (!isoOrStr) return '-'
     const d = new Date(isoOrStr)
     if (isNaN(d.getTime())) return String(isoOrStr)
     const today = new Date()
@@ -22,7 +22,7 @@ export function formatISTDate(isoOrStr) {
 }
 
 export function formatISTFull(isoOrStr) {
-    if (!isoOrStr) return '—'
+    if (!isoOrStr) return '-'
     const d = new Date(isoOrStr)
     if (isNaN(d.getTime())) return String(isoOrStr)
     return d.toLocaleString('en-IN', { timeZone: IST_TZ, day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })

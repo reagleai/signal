@@ -44,7 +44,7 @@ export default function SectionNav() {
                     })}
                 </nav>
 
-                {/* Right — wraps to second row on narrow screens */}
+                {/* Right - wraps to second row on narrow screens */}
                 <div className="flex items-center gap-2 sm:gap-4 pb-2 sm:pb-0">
                     {state.activeSection === 'data-status' ? (
                         <div className="flex items-center text-[11px] sm:text-[12px] text-[#9CA3A3]">

@@ -31,7 +31,7 @@ const CAPS = [
     { t: 'Problem Notepad', d: 'Save problems, add your own reasoning, and build a data-backed problem statement.', s: 'live', I: PenLine },
     { t: 'Follow-up Chat', d: 'Ask the Master PM Node targeted questions. Answers are scoped to the analyzed data.', s: 'live', I: MessageSquare },
     { t: 'Feedback Loop', d: 'Submit feedback from inside the tool. Routed directly to the product tracking pipeline.', s: 'live', I: Send },
-    { t: 'KPI Dashboard', d: 'High-level metrics — return rate, refund volume, fraud flags — with interactive chart breakdowns.', s: 'phase2', I: BarChart2 },
+    { t: 'KPI Dashboard', d: 'High-level metrics - return rate, refund volume, fraud flags - with interactive chart breakdowns.', s: 'phase2', I: BarChart2 },
     { t: 'Evidence Citations', d: 'Every AI recommendation links to specific raw source records for verification.', s: 'phase2', I: FileText },
 ]
 const TRADES = [
@@ -42,19 +42,19 @@ const TRADES = [
 ]
 const STEPS = [
     { n: '01', t: 'Connect your data sources', b: 'Signal pulls from 5 data types: SQL return records, CRM transcripts, customer reviews, fraud/abuse flags, and NPS survey responses. Each source is indexed into its own knowledge base so signals stay clean.', I: Database },
-    { n: '02', t: 'Run the analysis', b: 'One click triggers a multi-stage AI pipeline. Each data source is analyzed by a specialized layer. Then a master synthesis ranks the results across all sources — in real time.', I: Search },
-    { n: '03', t: 'Get ranked problem signals', b: 'You receive the top 5 problems — ranked by impact and frequency, with confidence scores, supporting evidence, and cross-source patterns. Ask follow-up questions in the built-in chat.', I: ListChecks },
+    { n: '02', t: 'Run the analysis', b: 'One click triggers a multi-stage AI pipeline. Each data source is analyzed by a specialized layer. Then a master synthesis ranks the results across all sources - in real time.', I: Search },
+    { n: '03', t: 'Get ranked problem signals', b: 'You receive the top 5 problems - ranked by impact and frequency, with confidence scores, supporting evidence, and cross-source patterns. Ask follow-up questions in the built-in chat.', I: ListChecks },
 ]
 const METRICS = [
     { l: 'Discovery Time', b: '7–8 hrs/week', g: '~2 hrs/week', m: 'Time logged on tool vs. manual extraction baseline' },
     { l: 'Signal Adoption', b: '0%', g: '60%', m: 'PM tagging source of problem definition' },
-    { l: 'Trust & Retention', b: '—', g: 'Stable weekly usage', m: 'Unique weekly logins, session depth, return rate' },
+    { l: 'Trust & Retention', b: '-', g: 'Stable weekly usage', m: 'Unique weekly logins, session depth, return rate' },
 ]
-const P2 = ['Nightly scheduled pipeline — remove manual trigger', 'Live KPI dashboard replacing mock data', 'Citation split-pane linking claims to raw evidence', 'LLM Judge Nodes validating groundedness', 'Per-category RAG namespaces (10+ vs. current 5)']
-const P3 = ['Embed into existing PM toolchain — zero context-switching', 'Offline evals against historical problem definitions', 'Expand to adjacent domains: payments, logistics, fulfillment', 'Product-led growth through PM credibility in leadership reviews']
+const P2 = ['Nightly scheduled pipeline - remove manual trigger', 'Live KPI dashboard replacing mock data', 'Citation split-pane linking claims to raw evidence', 'LLM Judge Nodes validating groundedness', 'Per-category RAG namespaces (10+ vs. current 5)']
+const P3 = ['Embed into existing PM toolchain - zero context-switching', 'Offline evals against historical problem definitions', 'Expand to adjacent domains: payments, logistics, fulfillment', 'Product-led growth through PM credibility in leadership reviews']
 const GAP_CARDS = [
-    { t: 'Qualitative-First Tools', b: "Platforms like Dovetail and Productboard excel at synthesizing user interviews — but can't ingest or query large-scale quantitative backend data like return rates, refund volumes, or fraud patterns.", I: MessageSquare },
-    { t: 'Behavioral Analytics', b: "Tools like Amplitude and Mixpanel track digital behavior — clicks, funnels, sessions — but can't map physical supply chain events or subjective customer feedback to operational outcomes.", I: TrendingUp },
+    { t: 'Qualitative-First Tools', b: "Platforms like Dovetail and Productboard excel at synthesizing user interviews - but can't ingest or query large-scale quantitative backend data like return rates, refund volumes, or fraud patterns.", I: MessageSquare },
+    { t: 'Behavioral Analytics', b: "Tools like Amplitude and Mixpanel track digital behavior - clicks, funnels, sessions - but can't map physical supply chain events or subjective customer feedback to operational outcomes.", I: TrendingUp },
     { t: 'General AI Assistants', b: 'Broad AI tools can answer questions, but lack the specialized retrieval pipelines needed to rank problems across multiple data types without heavy manual prompt engineering.', I: Brain },
 ]
 
@@ -99,10 +99,10 @@ export default function LandingPage({ onEnterDashboard }) {
                 <div className="relative max-w-[1000px] mx-auto px-4 sm:px-8 pt-16 sm:pt-24 pb-14 sm:pb-20">
                     <div className="lp-hero-entry"><SL>RETURNS DISCOVERY TOOL</SL></div>
                     <h1 className="lp-hero-entry lp-hero-entry-d1 text-[28px] sm:text-[42px] font-bold text-[#0F1111] leading-[1.12] max-w-[720px]">
-                        Turn 5 fragmented data sources into <span className="hero-accent-word">ranked problem signals</span> — in minutes, not hours.
+                        Turn 5 fragmented data sources into <span className="hero-accent-word">ranked problem signals</span> - in minutes, not hours.
                     </h1>
                     <p className="lp-hero-entry lp-hero-entry-d2 text-[15px] sm:text-[17px] text-[#565959] mt-5 max-w-[640px] leading-relaxed">
-                        Signal ingests returns data, CRM transcripts, reviews, fraud signals, and NPS surveys, then surfaces the top 5 problems worth solving next — with evidence and confidence scores. Not raw insight dumps — <span className="font-semibold text-[#0F1111]">a ranked starting point for user research and roadmap prioritization.</span>
+                        Signal ingests returns data, CRM transcripts, reviews, fraud signals, and NPS surveys, then surfaces the top 5 problems worth solving next - with evidence and confidence scores. Not raw insight dumps - <span className="font-semibold text-[#0F1111]">a ranked starting point for user research and roadmap prioritization.</span>
                     </p>
                     <div className="lp-hero-entry lp-hero-entry-d3 flex items-center gap-2 mt-6 text-[12px] text-[#9CA3A3]">
                         <span className="w-2 h-2 rounded-full bg-[#067D62] pulse-dot" />
@@ -132,7 +132,7 @@ export default function LandingPage({ onEnterDashboard }) {
                         })}
                     </div>
                     <p className="lp-reveal text-[13px] sm:text-[14px] text-[#565959] mt-8 max-w-[640px] leading-relaxed">
-                        Signal is designed for the gap: <span className="font-semibold text-[#0F1111]">cross-source synthesis for operational PMs</span> who need ranked, evidence-backed problem signals — not another dashboard.
+                        Signal is designed for the gap: <span className="font-semibold text-[#0F1111]">cross-source synthesis for operational PMs</span> who need ranked, evidence-backed problem signals - not another dashboard.
                     </p>
                 </div>
             </section>
@@ -140,7 +140,7 @@ export default function LandingPage({ onEnterDashboard }) {
             {/* ══ HOW IT WORKS ══ */}
             <section className="max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20">
                 <div className="lp-reveal"><SL>HOW IT WORKS</SL></div>
-                <div className="lp-reveal"><SH>From your data to prioritized signals — three steps.</SH></div>
+                <div className="lp-reveal"><SH>From your data to prioritized signals - three steps.</SH></div>
 
                 {/* Source badges */}
                 <div className="flex flex-wrap gap-2 mt-8 mb-10 lp-stagger">
@@ -214,7 +214,7 @@ export default function LandingPage({ onEnterDashboard }) {
             {/* ══ IMPACT & TRADEOFFS ══ */}
             <section className="max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20">
                 <div className="lp-reveal"><SL>MEASURING SUCCESS</SL></div>
-                <div className="lp-reveal"><SH>What success looks like — and what was deliberately traded off.</SH></div>
+                <div className="lp-reveal"><SH>What success looks like - and what was deliberately traded off.</SH></div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
                     {/* Metrics */}
                     <div>
@@ -257,7 +257,7 @@ export default function LandingPage({ onEnterDashboard }) {
             <section className="bg-white border-t border-b border-[#E8EAED]">
                 <div className="max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20">
                     <div className="lp-reveal"><SL>WHAT COMES NEXT</SL></div>
-                    <div className="lp-reveal"><SH>From prototype to production — in two phases.</SH></div>
+                    <div className="lp-reveal"><SH>From prototype to production - in two phases.</SH></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                         <div className="lp-reveal lp-card-hover border border-[#E8EAED] rounded-xl p-5 sm:p-6 bg-[#F7F8FA]">
                             <div className="flex items-center gap-2 mb-4">
@@ -285,12 +285,12 @@ export default function LandingPage({ onEnterDashboard }) {
             <section className="bg-[#232F3E] relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#232F3E] via-[#2a3a4e] to-[#232F3E] pointer-events-none" />
                 <div className="relative max-w-[1000px] mx-auto px-4 sm:px-8 py-14 sm:py-20 text-center lp-reveal">
-                    <h2 className="text-[22px] sm:text-[28px] font-bold text-white mb-4">Not summarization — prioritization for decision-making.</h2>
+                    <h2 className="text-[22px] sm:text-[28px] font-bold text-white mb-4">Not summarization - prioritization for decision-making.</h2>
                     <p className="text-[13px] sm:text-[14px] text-white/70 mb-2 max-w-[560px] mx-auto leading-relaxed">
                         Signal reduces PM synthesis time from hours to minutes by pulling fragmented return signals across sources, structuring them, and ranking the top problem signals for further validation.
                     </p>
                     <p className="text-[13px] sm:text-[14px] text-white/50 mb-8 max-w-[560px] mx-auto leading-relaxed">
-                        The output is not raw insight dumps — it is <span className="text-white/90 font-semibold">a ranked starting point for user research and roadmap prioritization.</span>
+                        The output is not raw insight dumps - it is <span className="text-white/90 font-semibold">a ranked starting point for user research and roadmap prioritization.</span>
                     </p>
                     <Btn onClick={onEnterDashboard} cls="px-8 py-3.5 text-[15px] shadow-[0_4px_20px_rgba(255,153,0,0.4)]">Open Live Prototype <ArrowRight size={16} /></Btn>
                     <div className="mt-6 text-[11px] text-white/30">

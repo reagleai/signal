@@ -206,11 +206,11 @@ export function AppProvider({ children }) {
                 // Differentiate error types for the UI
                 let errorMessage;
                 if (err.type === 'timeout') {
-                    errorMessage = 'Analysis timed out after 40 minutes. The backend may still be processing — try again shortly.';
+                    errorMessage = 'Analysis timed out after 40 minutes. The backend may still be processing - try again shortly.';
                 } else if (err.type === 'http') {
                     errorMessage = `Backend returned an error (HTTP ${err.status}). Please try again.`;
                 } else {
-                    errorMessage = 'Network error — unable to reach the analysis service. Check your connection and try again.';
+                    errorMessage = 'Network error - unable to reach the analysis service. Check your connection and try again.';
                 }
 
                 dispatch({
