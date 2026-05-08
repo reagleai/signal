@@ -48,6 +48,9 @@ export default function App() {
                 {state.activeSection === 'data-status' && <DataStatus />}
                 {state.activeSection === 'metrics' && <HighLevelMetrics />}
                 {state.activeSection === 'ai-insights' && <AIInsights />}
+                <footer className="w-full text-center py-6 text-sm text-gray-400 mt-auto">
+                    Built by Ajay Sharma · <a href="https://www.linkedin.com/in/workwithajay/" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600 transition-colors">LinkedIn</a>
+                </footer>
             </main>
 
             <StatusBar />

@@ -303,7 +303,7 @@ export default function LandingPage({ onEnterDashboard }) {
             <footer className="bg-[#F7F8FA] border-t border-[#E8EAED] py-6 sm:py-8">
                 <div className="max-w-[1000px] mx-auto px-4 sm:px-8 flex items-center justify-between">
                     <div className="flex items-center gap-2"><Logo size={18} /><span className="text-[13px] font-semibold text-[#0F1111]">Signal</span></div>
-                    <span className="text-[12px] text-[#9CA3A3]">Built by Ajay Sharma · 2026</span>
+                    <span className="text-[12px] text-[#9CA3A3]">Built by Ajay Sharma · <a href="https://www.linkedin.com/in/workwithajay/" target="_blank" rel="noopener noreferrer" className="hover:text-[#565959] underline transition-colors">LinkedIn</a></span>
                 </div>
             </footer>
         </div>
